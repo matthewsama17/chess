@@ -4,3 +4,4 @@ not even the first time thishappendbru
 
 Okey i think it looks like intellij is gonna work fine now i hav it set up in linux and it seems? likeworksing
 wait how do i commit? um i think i got it?? wait no it cant athenicta
+Okay it works an i now how to push but how do i pul/?
