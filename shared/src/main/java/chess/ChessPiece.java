@@ -50,8 +50,11 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        if(type == PieceType.PAWN) {
-            return pawnMoves(board,myPosition);
+        if(type == PieceType.PAWN && color == ChessGame.TeamColor.WHITE) {
+            return pawnMovesWhite(board, myPosition);
+        }
+        else if(type == PieceType.PAWN && color == ChessGame.TeamColor.BLACK) {
+            return pawnMovesBlack(board, myPosition);
         }
         else if(type == PieceType.ROOK) {
             return rookMoves(board,myPosition);
@@ -71,8 +74,132 @@ public class ChessPiece {
         return null;
     }
 
-    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+    private Collection<ChessMove> pawnMovesWhite(ChessBoard board, ChessPosition myPosition) {
+        int r = myPosition.getRow();
+        int c = myPosition.getColumn();
+        ChessPosition endPosition = null;
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+        //forward
+        endPosition = new ChessPosition(r+1,c);
+        if(board.getPieceColor(endPosition) == null) {
+            //check promotion
+            if(r == 7) {
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+            }
+            else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+
+            //check double forward
+            if(r == 2) {
+                endPosition = new ChessPosition(r+2,c);
+                if(board.getPieceColor(endPosition) == null) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        //capture right
+        if(c < 8) {
+            endPosition = new ChessPosition(r + 1, c + 1);
+            if (board.getPieceColor(endPosition) == ChessGame.TeamColor.BLACK) {
+                //check promotion
+                if (r == 7) {
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+                } else {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        //capture left
+        if(c > 1) {
+            endPosition = new ChessPosition(r + 1, c - 1);
+            if (board.getPieceColor(endPosition) == ChessGame.TeamColor.BLACK) {
+                //check promotion
+                if (r == 7) {
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+                } else {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        return moves;
+    }
+
+    private Collection<ChessMove> pawnMovesBlack(ChessBoard board, ChessPosition myPosition) {
+        int r = myPosition.getRow();
+        int c = myPosition.getColumn();
+        ChessPosition endPosition = null;
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+        //forward
+        endPosition = new ChessPosition(r-1,c);
+        if(board.getPieceColor(endPosition) == null) {
+            //check promotion
+            if(r == 2) {
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+            }
+            else {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+
+            //check double forward
+            if(r == 7) {
+                endPosition = new ChessPosition(r-2,c);
+                if(board.getPieceColor(endPosition) == null) {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        //capture right
+        if(c < 8) {
+            endPosition = new ChessPosition(r - 1, c + 1);
+            if (board.getPieceColor(endPosition) == ChessGame.TeamColor.WHITE) {
+                //check promotion
+                if (r == 2) {
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+                } else {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        //capture left
+        if(c > 1) {
+            endPosition = new ChessPosition(r - 1, c - 1);
+            if (board.getPieceColor(endPosition) == ChessGame.TeamColor.WHITE) {
+                //check promotion
+                if (r == 2) {
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, endPosition, PieceType.BISHOP));
+                } else {
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+        return moves;
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
