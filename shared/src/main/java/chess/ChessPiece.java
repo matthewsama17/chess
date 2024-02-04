@@ -76,7 +76,76 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int r = myPosition.getRow();
+        int c = myPosition.getColumn();
+        ChessPosition endPosition = null;
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+        //up
+        for(int i = 1; (r+i) <= 8; i++) {
+            endPosition = new ChessPosition(r+i,c);
+            ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
+            if(otherColor == color) {
+                break;
+            }
+            else if(otherColor == null) {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+            }
+            else {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+                break;
+            }
+        }
+
+        //down
+        for(int i = 1; (r-i) >= 1; i++) {
+            endPosition = new ChessPosition(r-i,c);
+            ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
+            if(otherColor == color) {
+                break;
+            }
+            else if(otherColor == null) {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+            }
+            else {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+                break;
+            }
+        }
+
+        //right
+        for(int i = 1; (c+i) <= 8; i++) {
+            endPosition = new ChessPosition(r,c+i);
+            ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
+            if(otherColor == color) {
+                break;
+            }
+            else if(otherColor == null) {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+            }
+            else {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+                break;
+            }
+        }
+
+        //left
+        for(int i = 1; (c-i) >= 1; i++) {
+            endPosition = new ChessPosition(r,c-i);
+            ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
+            if(otherColor == color) {
+                break;
+            }
+            else if(otherColor == null) {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+            }
+            else {
+                moves.add(new ChessMove(myPosition,endPosition,null));
+                break;
+            }
+        }
+
+        return moves;
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
@@ -90,7 +159,7 @@ public class ChessPiece {
         Collection<ChessMove> moves = new HashSet<ChessMove>();
 
         //up right
-        for(int i = 1; (r+i) < 8 && (c+i) < 8; i++) {
+        for(int i = 1; (r+i) <= 8 && (c+i) <= 8; i++) {
             endPosition = new ChessPosition(r+i,c+i);
             ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
             if(otherColor == color) {
@@ -106,7 +175,7 @@ public class ChessPiece {
         }
 
         //up left
-        for(int i = 1; (r+i) < 8 && (c-i) > 1; i++) {
+        for(int i = 1; (r+i) <= 8 && (c-i) >= 1; i++) {
             endPosition = new ChessPosition(r+i,c-i);
             ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
             if(otherColor == color) {
@@ -122,7 +191,7 @@ public class ChessPiece {
         }
 
         //down left
-        for(int i = 1; (r-i) > 1 && (c-1) > 1; i++) {
+        for(int i = 1; (r-i) >= 1 && (c-i) >= 1; i++) {
             endPosition = new ChessPosition(r-i,c-i);
             ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
             if(otherColor == color) {
@@ -138,7 +207,7 @@ public class ChessPiece {
         }
 
         //down right
-        for(int i = 1; (r-i) > 1 && (c+i) < 8; i++) {
+        for(int i = 1; (r-i) >= 1 && (c+i) <= 8; i++) {
             endPosition = new ChessPosition(r-i,c+i);
             ChessGame.TeamColor otherColor = board.getPieceColor(endPosition);
             if(otherColor == color) {
