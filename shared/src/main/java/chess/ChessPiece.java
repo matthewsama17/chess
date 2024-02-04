@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -14,7 +15,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor color;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.color = pieceColor;
         this.type = type;
     }
@@ -49,7 +50,88 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        if(type == PieceType.PAWN) {
+            return pawnMoves(board,myPosition);
+        }
+        else if(type == PieceType.ROOK) {
+            return rookMoves(board,myPosition);
+        }
+        else if(type == PieceType.KNIGHT) {
+            return knightMoves(board,myPosition);
+        }
+        else if(type == PieceType.BISHOP) {
+            return bishopMoves(board,myPosition);
+        }
+        else if(type == PieceType.QUEEN) {
+            return queenMoves(board,myPosition);
+        }
+        else if(type == PieceType.KING) {
+            return kingMoves(board,myPosition);
+        }
+        return null;
+    }
+
+    private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = bishopMoves(board,myPosition);
+        moves.addAll(rookMoves(board,myPosition));
+        return moves;
+    }
+
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        int r = myPosition.getRow();
+        int c = myPosition.getColumn();
+        ChessPosition endPosition = null;
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+        //right
+        endPosition = new ChessPosition(r,c+1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //left
+        endPosition = new ChessPosition(r,c-1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //up
+        endPosition = new ChessPosition(r+1,c);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //down
+        endPosition = new ChessPosition(r-1,c);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //up right
+        endPosition = new ChessPosition(r+1,c+1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //down left
+        endPosition = new ChessPosition(r-1,c-1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //up left
+        endPosition = new ChessPosition(r+1,c-1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        //down right
+        endPosition = new ChessPosition(r-1,c+1);
+        moves.add(new ChessMove(myPosition,endPosition,null));
+
+        return moves;
     }
 
     @Override
