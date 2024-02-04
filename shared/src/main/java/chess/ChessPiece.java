@@ -100,36 +100,68 @@ public class ChessPiece {
         Collection<ChessMove> moves = new HashSet<ChessMove>();
 
         //right
-        endPosition = new ChessPosition(r,c+1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(c < 8) {
+            endPosition = new ChessPosition(r, c + 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //left
-        endPosition = new ChessPosition(r,c-1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(c > 1) {
+            endPosition = new ChessPosition(r, c - 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //up
-        endPosition = new ChessPosition(r+1,c);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r < 8) {
+            endPosition = new ChessPosition(r + 1, c);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //down
-        endPosition = new ChessPosition(r-1,c);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r > 1) {
+            endPosition = new ChessPosition(r - 1, c);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //up right
-        endPosition = new ChessPosition(r+1,c+1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r < 8 && c < 8) {
+            endPosition = new ChessPosition(r + 1, c + 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //down left
-        endPosition = new ChessPosition(r-1,c-1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r > 1 && c > 1) {
+            endPosition = new ChessPosition(r - 1, c - 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //up left
-        endPosition = new ChessPosition(r+1,c-1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r < 8 && c > 1) {
+            endPosition = new ChessPosition(r + 1, c - 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         //down right
-        endPosition = new ChessPosition(r-1,c+1);
-        moves.add(new ChessMove(myPosition,endPosition,null));
+        if(r > 1 && c < 8) {
+            endPosition = new ChessPosition(r - 1, c + 1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
 
         return moves;
     }
