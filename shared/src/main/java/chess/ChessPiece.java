@@ -149,7 +149,76 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int r = myPosition.getRow();
+        int c = myPosition.getColumn();
+        ChessPosition endPosition = null;
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+        //up right
+        if(c < 8 && r < 7) {
+            endPosition = new ChessPosition(r+2,c+1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //right up
+        if(c < 7 && r < 8) {
+            endPosition = new ChessPosition(r+1,c+2);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //right down
+        if(c < 7 && r > 1) {
+            endPosition = new ChessPosition(r-1,c+2);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //down right
+        if(c < 8 && r > 2) {
+            endPosition = new ChessPosition(r-2,c+1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //down left
+        if(c > 1 && r > 2) {
+            endPosition = new ChessPosition(r-2,c-1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //left down
+        if(c > 2 && r > 1) {
+            endPosition = new ChessPosition(r-1,c-2);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //left up
+        if(c > 2 && r < 8) {
+            endPosition = new ChessPosition(r+1,c-2);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        //up left
+        if(c > 1 && r < 7) {
+            endPosition = new ChessPosition(r+2,c-1);
+            if(board.getPieceColor(endPosition) != color) {
+                moves.add(new ChessMove(myPosition, endPosition, null));
+            }
+        }
+
+        return moves;
     }
 
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
