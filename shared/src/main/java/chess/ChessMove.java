@@ -56,6 +56,6 @@ public class ChessMove {
     public String toString() {
         return "Move from " + startPosition +
                 " to " + endPosition +
-                ", promotion is " + promotionPiece;
+                ", " + promotionPiece + " promotion.";
     }
 }
