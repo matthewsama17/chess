@@ -11,7 +11,7 @@ import java.util.Collection;
 public class ChessGame {
 
     private TeamColor teamTurn = TeamColor.WHITE;
-    ChessBoard gameBoard = new ChessBoard();
+    private ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
 
@@ -29,6 +29,9 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) { teamTurn = team; }
 
+    /**
+     * Switches the team whose turn it is
+     */
     public void advanceTeamTurn() {
         if(teamTurn == TeamColor.WHITE) {
             teamTurn = TeamColor.BLACK;
@@ -68,6 +71,17 @@ public class ChessGame {
     }
 
     /**
+     * Determines if the given team has any valid moves. Used by isInCheckmate and
+     * isInStalemate.
+     *
+     * @param teamColor which team to check for checkmate
+     * @return True if the specified team has a valid move
+     */
+    private boolean hasValidMove(TeamColor teamColor) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
@@ -83,9 +97,7 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-    }
+    public boolean isInCheckmate(TeamColor teamColor) { return isInCheck(teamColor) && !hasValidMove(teamColor); }
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -94,9 +106,7 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
-    public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-    }
+    public boolean isInStalemate(TeamColor teamColor) { return !isInCheck(teamColor) && !hasValidMove(teamColor); }
 
     /**
      * Sets this game's chessboard with a given board
