@@ -81,7 +81,7 @@ public class ChessGame {
     }
 
     /**
-     * Makes a move on a chess board regardless of whether it is legal
+     * Makes a move in a chess game regardless of whether it is legal
      *
      * @param move chess move to preform
      */
@@ -129,7 +129,20 @@ public class ChessGame {
      * @return True if the specified team has a valid move
      */
     private boolean hasValidMove(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean hasMove = false;
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i,j);
+                if(gameBoard.getPieceColor(position) != teamColor) { continue; }
+                Collection<ChessMove> moves = validMoves(position);
+                if(moves == null) { continue; }
+                if(moves.isEmpty()) { continue; }
+                hasMove = true;
+                break;
+            }
+            if(hasMove) { break; }
+        }
+        return hasMove;
     }
 
     /**
