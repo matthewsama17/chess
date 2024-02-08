@@ -55,7 +55,10 @@ public class ChessBoard {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> getMoves(ChessPosition position) {
-        return getPiece(position).pieceMoves(this,position);
+        if(getPiece(position) == null) {
+            return null;
+        }
+        return getPiece(position).pieceMoves(this, position);
     }
 
     /**
