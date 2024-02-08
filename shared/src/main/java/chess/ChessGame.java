@@ -55,11 +55,33 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        TeamColor color = gameBoard.getPieceColor(startPosition);
+        if(color == null) {
+            return null;
+        }
+
+        Collection<ChessMove> moves = gameBoard.getMoves(startPosition);
+        for(ChessMove m: moves) {
+            ChessPiece originalStart = gameBoard.getPiece(m.getStartPosition());
+            ChessPiece originalEnd = gameBoard.getPiece(m.getEndPosition());
+
+            if(originalEnd.getPieceType() == ChessPiece.PieceType.KING) {
+                moves.remove(m);
+                continue;
+            }
+
+            makeAnyMove(m);
+            if(isInCheck(color)) { moves.remove(m); }
+
+            gameBoard.addPiece(m.getStartPosition(),originalStart);
+            gameBoard.addPiece(m.getEndPosition(),originalEnd);
+        }
+
+        return moves;
     }
 
     /**
-     * Makes a move in a chess game regardless of whether it is legal
+     * Makes a move on a chess board regardless of whether it is legal
      *
      * @param move chess move to preform
      */
@@ -85,7 +107,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        TeamColor color = gameBoard.getPieceColor(move.getStartPosition());
+        if(color == null) {
+            throw new InvalidMoveException();
+        }
+        if(teamTurn != color) {
+            throw new InvalidMoveException();
+        }
+        Collection<ChessMove> valid = validMoves(move.getStartPosition());
+        if(!valid.contains(move)) {
+            throw new InvalidMoveException();
+        }
+        makeAnyMove(move);
     }
 
     /**
