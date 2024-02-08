@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import static java.lang.Math.abs;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -17,6 +18,8 @@ public class ChessGame {
     private boolean whiteCastleRight = true;
     private boolean blackCastleLeft = true;
     private boolean blackCastleRight = true;
+    private ChessMove enPassantRight = null;
+    private ChessMove enPassantLeft = null;
 
     public ChessGame() { }
 
@@ -66,6 +69,10 @@ public class ChessGame {
         }
 
         Collection<ChessMove> moves = gameBoard.getMoves(startPosition);
+        if(enPassantLeft != null
+                && startPosition.equals(enPassantLeft.getStartPosition())) { moves.add(enPassantLeft); }
+        if(enPassantRight != null
+                && startPosition.equals(enPassantRight.getStartPosition())) { moves.add(enPassantRight); }
         Collection<ChessMove> badMoves = new HashSet<> ();
         for(ChessMove m: moves) {
             ChessPiece originalStart = gameBoard.getPiece(m.getStartPosition());
@@ -226,6 +233,19 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         makeAnyMove(move);
+        checkIfCastled(move);
+        staleCastleMoves(move);
+        checkIfEnPassanted(move);
+        advanceTeamTurn();
+        resetEnPassant(move);
+    }
+
+    /**
+     * Check if the move that just happened was a castle, and move the rook appropriately
+     *
+     * @param move that just happened
+     */
+    private void checkIfCastled (ChessMove move) {
         if(whiteCastleLeft &&
                 move.equals(new ChessMove(new ChessPosition(1,5),new ChessPosition(1,3),null))) {
             makeAnyMove(new ChessMove(new ChessPosition(1,1),new ChessPosition(1,4),null));
@@ -242,8 +262,24 @@ public class ChessGame {
                 move.equals(new ChessMove(new ChessPosition(8,5),new ChessPosition(8,7),null))) {
             makeAnyMove(new ChessMove(new ChessPosition(8,8),new ChessPosition(8,6),null));
         }
-        advanceTeamTurn();
-        staleCastleMoves(move);
+    }
+
+    /**
+     * Check if the move that just happened was an en Passant, and kills the pawn appropriately
+     *
+     * @param move that just happened
+     */
+    private void checkIfEnPassanted (ChessMove move) {
+        int row = move.getStartPosition().getRow();
+        int col = move.getStartPosition().getColumn();
+        if(move.equals(enPassantRight)) {
+            ChessPosition position = new ChessPosition(row,col+1);
+            gameBoard.addPiece(position,null);
+        }
+        if(move.equals(enPassantLeft)) {
+            ChessPosition position = new ChessPosition(row,col-1);
+            gameBoard.addPiece(position,null);
+        }
     }
 
     /**
@@ -280,6 +316,34 @@ public class ChessGame {
         }
         if(end.equals(blackRookRight)) {
             blackCastleRight = false;
+        }
+    }
+
+    /**
+     * Checks if this move sets up for an En Passant
+     *
+     * @param move chess move to check
+     */
+    private void resetEnPassant(ChessMove move) {
+        enPassantRight = null;
+        enPassantLeft = null;
+
+        if(gameBoard.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.PAWN
+                && abs(move.getEndPosition().getRow() - move.getStartPosition().getRow()) > 1) {
+            int row = move.getEndPosition().getRow();
+            int skipRow = 6;
+            if(row == 4) { skipRow = 3; }
+            int col = move.getEndPosition().getColumn();
+            if(col > 1
+                    && gameBoard.getPieceColor(new ChessPosition(row,col-1)) == teamTurn
+                    && gameBoard.getPiece(new ChessPosition(row,col-1)).getPieceType() == ChessPiece.PieceType.PAWN) {
+                enPassantRight = new ChessMove(new ChessPosition(row,col-1),new ChessPosition(skipRow,col),null);
+            }
+            if(col < 8
+                    && gameBoard.getPieceColor(new ChessPosition(row,col+1)) == teamTurn
+                    && gameBoard.getPiece(new ChessPosition(row,col+1)).getPieceType() == ChessPiece.PieceType.PAWN) {
+                enPassantLeft = new ChessMove(new ChessPosition(row,col+1),new ChessPosition(skipRow,col),null);
+            }
         }
     }
 
