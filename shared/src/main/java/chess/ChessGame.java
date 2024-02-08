@@ -62,7 +62,7 @@ public class ChessGame {
         }
 
         Collection<ChessMove> moves = gameBoard.getMoves(startPosition);
-        Collection<ChessMove> badMoves = new HashSet<ChessMove> ();
+        Collection<ChessMove> badMoves = new HashSet<> ();
         for(ChessMove m: moves) {
             ChessPiece originalStart = gameBoard.getPiece(m.getStartPosition());
             ChessPiece originalEnd = gameBoard.getPiece(m.getEndPosition());
@@ -167,8 +167,8 @@ public class ChessGame {
                 for(ChessMove m: moves) {
                     if(m.getEndPosition().equals(kingPosition)){
                         kingInCheck = true;
+                        break;
                     }
-                    if(kingInCheck) { break; }
                 }
                 if(kingInCheck) { break; }
             }
