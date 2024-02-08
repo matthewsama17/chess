@@ -13,9 +13,7 @@ public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard gameBoard = new ChessBoard();
 
-    public ChessGame() {
-
-    }
+    public ChessGame() { }
 
     /**
      * @return Which team's turn it is
@@ -88,7 +86,32 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+
+    }
+
+    /**
+     * Finds the position of the king. Used by isInCheck
+     *
+     * @param teamColor which team's king
+     * @return ChessPosition of the king
+     */
+    private ChessPosition findKing(TeamColor teamColor) {
+        boolean kingFound = false;
+        ChessPiece kingExample = new ChessPiece(teamColor,ChessPiece.PieceType.KING);
+        ChessPosition kingPosition = null;
+
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                kingPosition = new ChessPosition(i,j);
+                if(gameBoard.getPiece(kingPosition).equals(kingExample)) {
+                    kingFound = true;
+                }
+                if(kingFound) { break; }
+            }
+            if(kingFound) { break; }
+        }
+
+        return kingPosition;
     }
 
     /**
