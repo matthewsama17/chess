@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -61,22 +62,24 @@ public class ChessGame {
         }
 
         Collection<ChessMove> moves = gameBoard.getMoves(startPosition);
+        Collection<ChessMove> badMoves = new HashSet<ChessMove> ();
         for(ChessMove m: moves) {
             ChessPiece originalStart = gameBoard.getPiece(m.getStartPosition());
             ChessPiece originalEnd = gameBoard.getPiece(m.getEndPosition());
 
-            if(originalEnd.getPieceType() == ChessPiece.PieceType.KING) {
-                moves.remove(m);
+            if(originalEnd != null && originalEnd.getPieceType() == ChessPiece.PieceType.KING) {
+                badMoves.add(m);
                 continue;
             }
 
             makeAnyMove(m);
-            if(isInCheck(color)) { moves.remove(m); }
+            if(isInCheck(color)) { badMoves.add(m); }
 
             gameBoard.addPiece(m.getStartPosition(),originalStart);
             gameBoard.addPiece(m.getEndPosition(),originalEnd);
         }
 
+        moves.removeAll(badMoves);
         return moves;
     }
 
@@ -119,6 +122,7 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         makeAnyMove(move);
+        advanceTeamTurn();
     }
 
     /**
@@ -153,6 +157,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor);
+        if(kingPosition == null) { return false; }
         boolean kingInCheck = false;
 
         for(int i = 1; i <= 8; i++) {
@@ -195,6 +200,7 @@ public class ChessGame {
             }
             if(kingFound) { break; }
         }
+        if(!kingFound) { kingPosition = null; }
 
         return kingPosition;
     }
