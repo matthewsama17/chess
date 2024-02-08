@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -32,10 +33,29 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) { return board[position.getRow()-1][position.getColumn()-1]; }
 
+    /**
+     * Gets the color of a chess piece on the chessboard
+     *
+     * @param position The position to get the piece from
+     * @return Either the color of the piece at the position, or null if no
+     * piece is at that position
+     */
     public ChessGame.TeamColor getPieceColor(ChessPosition position) {
         ChessPiece piece = getPiece(position);
         if(piece == null) { return null; }
         return piece.getTeamColor();
+    }
+
+    /**
+     * Calculates all the positions a chess piece at a position can move to
+     * Does not take into account moves that are illegal due to leaving the king in
+     * danger
+     *
+     * @param position The position of the piece to calculate the moves of
+     * @return Collection of valid moves
+     */
+    public Collection<ChessMove> getMoves(ChessPosition position) {
+        return getPiece(position).pieceMoves(this,position);
     }
 
     /**
