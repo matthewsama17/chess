@@ -59,6 +59,26 @@ public class ChessGame {
     }
 
     /**
+     * Makes a move in a chess game regardless of whether it is legal
+     *
+     * @param move chess move to preform
+     */
+    private void makeAnyMove(ChessMove move) {
+        ChessPiece.PieceType type;
+        if(move.getPromotionPiece() == null) {
+            type = gameBoard.getPiece(move.getStartPosition()).getPieceType();
+        }
+        else {
+            type = move.getPromotionPiece();
+        }
+        TeamColor color = gameBoard.getPieceColor(move.getStartPosition());
+        ChessPiece endPiece = new ChessPiece(color,type);
+
+        gameBoard.addPiece(move.getStartPosition(),null);
+        gameBoard.addPiece(move.getEndPosition(),endPiece);
+    }
+
+    /**
      * Makes a move in a chess game
      *
      * @param move chess move to preform
