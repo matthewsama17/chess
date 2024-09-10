@@ -36,6 +36,21 @@ public class ChessBoard {
     }
 
     /**
+     * Gets the color of a chess piece on the chessboard
+     *
+     * @param position The position to get the piece from
+     * @return Either the color of the piece at the position, or null if no
+     * piece is at that position
+     */
+    public ChessGame.TeamColor getPieceColor(ChessPosition position) {
+        ChessPiece piece = getPiece(position);
+        if(piece == null) {
+            return null;
+        }
+        return piece.getTeamColor();
+    }
+
+    /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
