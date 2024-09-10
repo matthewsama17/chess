@@ -32,6 +32,15 @@ public class ChessPosition {
         return col;
     }
 
+    /**
+     * @return whether this position is on a 8X8 chess board
+     */
+    public boolean isOnBoard() {
+        return 0 < row && row <= 8 && 0 < col && col <= 8;
+    }
+
+
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
