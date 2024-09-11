@@ -76,7 +76,14 @@ public class ChessPieceMoveFinder {
      * @return Collection of valid moves
      */
     public static HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        moves.addAll(slide(board, myPosition, myColor, 1, 0));
+        moves.addAll(slide(board, myPosition, myColor, 0, 1));
+        moves.addAll(slide(board, myPosition, myColor, -1, 0));
+        moves.addAll(slide(board, myPosition, myColor, 0, -1));
+
+        return moves;
     }
 
     /**
@@ -87,7 +94,14 @@ public class ChessPieceMoveFinder {
      * @return Collection of valid moves
      */
     public static HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        moves.addAll(slide(board, myPosition, myColor, 1, 1));
+        moves.addAll(slide(board, myPosition, myColor, -1, 1));
+        moves.addAll(slide(board, myPosition, myColor, -1, -1));
+        moves.addAll(slide(board, myPosition, myColor, 1, -1));
+
+        return moves;
     }
 
     /**
@@ -105,9 +119,9 @@ public class ChessPieceMoveFinder {
     }
 
     public static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
         ChessPosition target = new ChessPosition(myPosition.getRow()+rowOffset, myPosition.getColumn()+columnOffset);
 
-        HashSet<ChessMove> moves = new HashSet<ChessMove>();
         if(!isOnBoard(target)) {
             return moves;
         }
@@ -116,6 +130,32 @@ public class ChessPieceMoveFinder {
             return moves;
         }
         moves.add(new ChessMove(myPosition, target, null));
+        return moves;
+    }
+
+    public static HashSet<ChessMove> slide(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        int row = myPosition.getRow() + rowOffset;
+        int col = myPosition.getColumn() + columnOffset;
+        ChessPosition target = new ChessPosition(row, col);
+        while(isOnBoard(target)) {
+            ChessGame.TeamColor targetColor = board.getPieceColor(target);
+
+            if(targetColor == myColor) {
+                break;
+            }
+            moves.add(new ChessMove(myPosition, target, null));
+            if(targetColor != null) {
+                break;
+            }
+
+            //increment
+            row += rowOffset;
+            col += columnOffset;
+            target = new ChessPosition(row, col);
+        }
+
         return moves;
     }
 }
