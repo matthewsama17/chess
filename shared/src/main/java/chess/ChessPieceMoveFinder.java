@@ -60,7 +60,7 @@ public class ChessPieceMoveFinder {
             }
         }
 
-Op        int i = 1;
+        int i = 1;
         while(true) {
             target = new ChessPosition(row+advance, col+i);
             if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
