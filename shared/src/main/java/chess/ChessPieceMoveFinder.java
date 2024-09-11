@@ -21,7 +21,70 @@ public class ChessPieceMoveFinder {
      * @return Collection of valid moves
      */
     public static HashSet<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int advance = 0;
+        boolean atStart = false;
+        boolean atEnd = false;
+
+        if(myColor == ChessGame.TeamColor.WHITE) {
+            advance = 1;
+            if(row == 2) {
+                atStart = true;
+            }
+            if(row == 7) {
+                atEnd = true;
+            }
+        }
+        if(myColor == ChessGame.TeamColor.BLACK) {
+            advance = -1;
+            if(row == 2) {
+                atEnd = true;
+            }
+            if(row == 7) {
+                atStart = true;
+            }
+        }
+
+        ChessPosition target = new ChessPosition(row+advance, col);
+        if(board.getPieceColor(target) == null) {
+            moves.add(new ChessMove(myPosition, target, null));
+
+            if(atStart) {
+                target = new ChessPosition(row+2*advance, col);
+                if(board.getPieceColor(target) == null) {
+                    moves.add(new ChessMove(myPosition, target, null));
+                }
+            }
+        }
+
+        target = new ChessPosition(row+advance, col+1);
+        if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
+            moves.add(new ChessMove(myPosition, target, null));
+        }
+
+        target = new ChessPosition(row+advance, col-1);
+        if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
+            moves.add(new ChessMove(myPosition, target, null));
+        }
+
+        if(atEnd) {
+            HashSet<ChessMove> promotionMoves = new HashSet<ChessMove>();
+
+            for(ChessMove move : moves) {
+                target = move.getEndPosition();
+                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
+                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
+                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
+                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
+            }
+
+            return promotionMoves;
+        }
+
+        return moves;
     }
 
     /**
