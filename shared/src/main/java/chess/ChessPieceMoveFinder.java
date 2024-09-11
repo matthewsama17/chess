@@ -32,7 +32,18 @@ public class ChessPieceMoveFinder {
      * @return Collection of valid moves
      */
     public static HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        moves.addAll(jump(board, myPosition, myColor, 1, 0));
+        moves.addAll(jump(board, myPosition, myColor, 1, 1));
+        moves.addAll(jump(board, myPosition, myColor, 0, 1));
+        moves.addAll(jump(board, myPosition, myColor, -1, 1));
+        moves.addAll(jump(board, myPosition, myColor, -1, 0));
+        moves.addAll(jump(board, myPosition, myColor, -1, -1));
+        moves.addAll(jump(board, myPosition, myColor, 0, -1));
+        moves.addAll(jump(board, myPosition, myColor, 1, -1));
+
+        return moves;
     }
 
     /**
@@ -43,7 +54,18 @@ public class ChessPieceMoveFinder {
      * @return Collection of valid moves
      */
     public static HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+
+        moves.addAll(jump(board, myPosition, myColor, 2, 1));
+        moves.addAll(jump(board, myPosition, myColor, 1, 2));
+        moves.addAll(jump(board, myPosition, myColor, -1, 2));
+        moves.addAll(jump(board, myPosition, myColor, -2, 1));
+        moves.addAll(jump(board, myPosition, myColor, -2, -1));
+        moves.addAll(jump(board, myPosition, myColor, -1, -2));
+        moves.addAll(jump(board, myPosition, myColor, 1, -2));
+        moves.addAll(jump(board, myPosition, myColor, 2, -1));
+
+        return moves;
     }
 
     /**
@@ -79,6 +101,21 @@ public class ChessPieceMoveFinder {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
         moves.addAll(bishopMoves(board, myPosition, myColor));
         moves.addAll(rookMoves(board, myPosition, myColor));
+        return moves;
+    }
+
+    public static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+        ChessPosition target = new ChessPosition(myPosition.getRow()+rowOffset, myPosition.getColumn()+columnOffset);
+
+        HashSet<ChessMove> moves = new HashSet<ChessMove>();
+        if(!isOnBoard(target)) {
+            return moves;
+        }
+        ChessGame.TeamColor targetColor = board.getPieceColor(target);
+        if(targetColor == myColor) {
+            return moves;
+        }
+        moves.add(new ChessMove(myPosition, target, null));
         return moves;
     }
 }
