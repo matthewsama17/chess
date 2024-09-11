@@ -60,31 +60,41 @@ public class ChessPieceMoveFinder {
             }
         }
 
-        target = new ChessPosition(row+advance, col+1);
-        if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
-            moves.add(new ChessMove(myPosition, target, null));
-        }
+Op        int i = 1;
+        while(true) {
+            target = new ChessPosition(row+advance, col+i);
+            if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
+                moves.add(new ChessMove(myPosition, target, null));
+            }
 
-        target = new ChessPosition(row+advance, col-1);
-        if(isOnBoard(target) && board.getPieceColor(target) != null && board.getPieceColor(target) != myColor) {
-            moves.add(new ChessMove(myPosition, target, null));
+            if(i == 1) {
+                i = -1;
+                continue;
+            }
+            break;
+
         }
 
         if(atEnd) {
-            HashSet<ChessMove> promotionMoves = new HashSet<ChessMove>();
-
-            for(ChessMove move : moves) {
-                target = move.getEndPosition();
-                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.QUEEN));
-                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.BISHOP));
-                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.KNIGHT));
-                promotionMoves.add(new ChessMove(myPosition, target, ChessPiece.PieceType.ROOK));
-            }
-
-            return promotionMoves;
+            return getPromotions(moves);
         }
 
         return moves;
+    }
+
+    private static HashSet<ChessMove> getPromotions(HashSet<ChessMove> moves) {
+        HashSet<ChessMove> promotionMoves = new HashSet<ChessMove>();
+
+        for(ChessMove move : moves) {
+            ChessPosition startPosition = move.getStartPosition();
+            ChessPosition endPosition= move.getEndPosition();
+            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
+        }
+
+        return promotionMoves;
     }
 
     /**
@@ -181,7 +191,7 @@ public class ChessPieceMoveFinder {
         return moves;
     }
 
-    public static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+    private static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
         ChessPosition target = new ChessPosition(myPosition.getRow()+rowOffset, myPosition.getColumn()+columnOffset);
 
@@ -196,7 +206,7 @@ public class ChessPieceMoveFinder {
         return moves;
     }
 
-    public static HashSet<ChessMove> slide(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+    private static HashSet<ChessMove> slide(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         int row = myPosition.getRow() + rowOffset;
