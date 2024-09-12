@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.HashSet;
+import chess.ChessPiece.PieceType;
+import chess.ChessGame.TeamColor;
 
 public class ChessPieceMoveFinder {
 
@@ -20,7 +22,7 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         int row = myPosition.getRow();
@@ -29,7 +31,7 @@ public class ChessPieceMoveFinder {
         boolean atStart = false;
         boolean atEnd = false;
 
-        if(myColor == ChessGame.TeamColor.WHITE) {
+        if(myColor == TeamColor.WHITE) {
             advance = 1;
             if(row == 2) {
                 atStart = true;
@@ -38,7 +40,7 @@ public class ChessPieceMoveFinder {
                 atEnd = true;
             }
         }
-        if(myColor == ChessGame.TeamColor.BLACK) {
+        if(myColor == TeamColor.BLACK) {
             advance = -1;
             if(row == 2) {
                 atEnd = true;
@@ -88,10 +90,10 @@ public class ChessPieceMoveFinder {
         for(ChessMove move : moves) {
             ChessPosition startPosition = move.getStartPosition();
             ChessPosition endPosition= move.getEndPosition();
-            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
-            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
-            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
-            promotionMoves.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, PieceType.QUEEN));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, PieceType.BISHOP));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, PieceType.KNIGHT));
+            promotionMoves.add(new ChessMove(startPosition, endPosition, PieceType.ROOK));
         }
 
         return promotionMoves;
@@ -104,7 +106,7 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         moves.addAll(jump(board, myPosition, myColor, 1, 0));
@@ -126,7 +128,7 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         moves.addAll(jump(board, myPosition, myColor, 2, 1));
@@ -148,7 +150,7 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         moves.addAll(slide(board, myPosition, myColor, 1, 0));
@@ -166,7 +168,7 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         moves.addAll(slide(board, myPosition, myColor, 1, 1));
@@ -184,21 +186,21 @@ public class ChessPieceMoveFinder {
      *
      * @return Collection of valid moves
      */
-    public static HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor) {
+    public static HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition, TeamColor myColor) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
         moves.addAll(bishopMoves(board, myPosition, myColor));
         moves.addAll(rookMoves(board, myPosition, myColor));
         return moves;
     }
 
-    private static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+    private static HashSet<ChessMove> jump(ChessBoard board, ChessPosition myPosition, TeamColor myColor, int rowOffset, int columnOffset) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
         ChessPosition target = new ChessPosition(myPosition.getRow()+rowOffset, myPosition.getColumn()+columnOffset);
 
         if(!isOnBoard(target)) {
             return moves;
         }
-        ChessGame.TeamColor targetColor = board.getPieceColor(target);
+        TeamColor targetColor = board.getPieceColor(target);
         if(targetColor == myColor) {
             return moves;
         }
@@ -206,14 +208,14 @@ public class ChessPieceMoveFinder {
         return moves;
     }
 
-    private static HashSet<ChessMove> slide(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, int rowOffset, int columnOffset) {
+    private static HashSet<ChessMove> slide(ChessBoard board, ChessPosition myPosition, TeamColor myColor, int rowOffset, int columnOffset) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
 
         int row = myPosition.getRow() + rowOffset;
         int col = myPosition.getColumn() + columnOffset;
         ChessPosition target = new ChessPosition(row, col);
         while(isOnBoard(target)) {
-            ChessGame.TeamColor targetColor = board.getPieceColor(target);
+            TeamColor targetColor = board.getPieceColor(target);
 
             if(targetColor == myColor) {
                 break;
