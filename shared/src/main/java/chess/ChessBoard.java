@@ -129,13 +129,15 @@ public class ChessBoard implements Cloneable {
 
     @Override
     public ChessBoard clone() {
-        try {
-            ChessBoard clone = (ChessBoard) super.clone();
-            clone.squares = this.squares.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+        ChessBoard chessBoard = new ChessBoard();
+
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                chessBoard.squares[i][j] = this.squares[i][j];
+            }
         }
+
+        return chessBoard;
     }
 
     @Override
