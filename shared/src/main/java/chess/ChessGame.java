@@ -60,7 +60,32 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        TeamColor pieceColor = gameBoard.getPieceColor(startPosition);
+        if(pieceColor == null) {
+            return null;
+        }
+
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+        if(pieceColor != teamTurn) {
+            return moves;
+        }
+
+        moves = gameBoard.getPieceMoves(startPosition);
+
+        Collection<ChessMove> invalidMoves = new HashSet<ChessMove>();
+        for(ChessMove move : moves) {
+            ChessBoard trueBoard = gameBoard.clone();
+
+            gameBoard.movePiece(move);
+            if(isInCheck(pieceColor)) {
+                invalidMoves.add(move);
+            }
+
+            gameBoard = trueBoard;
+        }
+
+        moves.removeAll(invalidMoves);
+        return moves;
     }
 
     /**
