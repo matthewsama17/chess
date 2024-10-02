@@ -35,6 +35,15 @@ public class ChessGame {
         teamTurn = team;
     }
 
+    public void updateTeamTurn() {
+        if(teamTurn == TeamColor.WHITE) {
+            teamTurn = TeamColor.BLACK;
+        }
+        if(teamTurn == TeamColor.BLACK) {
+            teamTurn = TeamColor.WHITE;
+        }
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
