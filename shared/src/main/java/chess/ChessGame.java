@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -10,6 +11,9 @@ import java.util.Collection;
  */
 public class ChessGame {
 
+    private TeamColor teamTurn = TeamColor.WHITE;
+    private ChessBoard gameBoard = new ChessBoard();
+
     public ChessGame() {
 
     }
@@ -18,7 +22,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return teamTurn;
     }
 
     /**
@@ -27,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        teamTurn = team;
     }
 
     /**
@@ -96,7 +100,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        gameBoard = board;
     }
 
     /**
@@ -105,6 +109,21 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return gameBoard;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessGame chessGame)) return false;
+
+        return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(teamTurn);
+        result = 31 * result + Objects.hashCode(gameBoard);
+        return result;
     }
 }
