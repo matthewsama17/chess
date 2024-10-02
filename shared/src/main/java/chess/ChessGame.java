@@ -39,7 +39,7 @@ public class ChessGame {
         if(teamTurn == TeamColor.WHITE) {
             teamTurn = TeamColor.BLACK;
         }
-        if(teamTurn == TeamColor.BLACK) {
+        else if(teamTurn == TeamColor.BLACK) {
             teamTurn = TeamColor.WHITE;
         }
     }
