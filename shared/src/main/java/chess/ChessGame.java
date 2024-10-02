@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -84,6 +85,29 @@ public class ChessGame {
     }
 
     /**
+     * returns all moves that can be made by a piece on the board
+     * Does not take into account moves that are illegal due to leaving the king
+     * in danger
+     *
+     * @return Collection of all ChessMoves possible
+     */
+    private Collection<ChessMove> allMoves() {
+        Collection<ChessMove> allMoves = new HashSet<>();
+
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+
+                Collection<ChessMove> moves = gameBoard.getPieceMoves(new ChessPosition(i,j));
+                if(moves != null) {
+                    allMoves.addAll(moves);
+                }
+            }
+        }
+
+        return allMoves;
+    }
+
+    /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
@@ -92,7 +116,7 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor);
 
-
+        Collection<ChessMove> allMoves = allMoves();
     }
 
     /**
