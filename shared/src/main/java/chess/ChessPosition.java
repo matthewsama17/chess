@@ -46,4 +46,12 @@ public class ChessPosition {
         result = 31 * result + col;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+                "row=" + row +
+                ", col=" + col +
+                '}';
+    }
 }

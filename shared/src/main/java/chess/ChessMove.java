@@ -61,4 +61,19 @@ public class ChessMove {
         result = 31 * result + Objects.hashCode(promotionPiece);
         return result;
     }
+
+    @Override
+    public String toString() {
+        if(promotionPiece == null) {
+            return "ChessMove{" +
+                    "startPosition=" + startPosition +
+                    ", endPosition=" + endPosition +
+                    '}';
+        }
+        return "ChessMove{" +
+                "startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", promotionPiece=" + promotionPiece +
+                '}';
+    }
 }
