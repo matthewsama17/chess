@@ -117,7 +117,7 @@ public class ChessGame {
                 ChessPiece piece = gameBoard.getPiece(position);
                 if(piece != null
                         && piece.getPieceType() == ChessPiece.PieceType.KING
-                        && piece.getTeamColor() == TeamColor.WHITE) {
+                        && piece.getTeamColor() == teamColor) {
                     return position;
                 }
             }
@@ -159,7 +159,7 @@ public class ChessGame {
         Collection<ChessMove> allMoves = allMoves();
 
         for(ChessMove move : allMoves) {
-            if(move.getEndPosition() == kingPosition) {
+            if(move.getEndPosition().equals(kingPosition)) {
                 return true;
             }
         }
