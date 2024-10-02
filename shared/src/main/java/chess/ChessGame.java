@@ -64,13 +64,35 @@ public class ChessGame {
     }
 
     /**
+     * returns the location of the given team's king
+     *
+     * @param teamColor which king to find
+     * @return the position of the king of the given team
+     */
+    private ChessPosition findKing(TeamColor teamColor) {
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition position = new ChessPosition(i,j);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if(piece.getPieceType() == ChessPiece.PieceType.KING
+                        && piece.getTeamColor() == TeamColor.WHITE) {
+                    return position;
+                }
+            }
+        }
+        return new ChessPosition(0,0);
+    }
+
+    /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = findKing(teamColor);
+
+
     }
 
     /**
