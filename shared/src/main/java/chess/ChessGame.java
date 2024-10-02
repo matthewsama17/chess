@@ -115,8 +115,14 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor);
-
         Collection<ChessMove> allMoves = allMoves();
+
+        for(ChessMove move : allMoves) {
+            if(move.getEndPosition() == kingPosition) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
