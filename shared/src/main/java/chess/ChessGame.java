@@ -66,12 +66,7 @@ public class ChessGame {
         }
 
         Collection<ChessMove> moves = new HashSet<ChessMove>();
-        if(pieceColor != teamTurn) {
-            return moves;
-        }
-
         moves = gameBoard.getPieceMoves(startPosition);
-
         Collection<ChessMove> invalidMoves = new HashSet<ChessMove>();
         for(ChessMove move : moves) {
             ChessBoard trueBoard = gameBoard.clone();
@@ -97,6 +92,10 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(validMoves == null || !validMoves.contains(move)) {
+            throw new InvalidMoveException();
+        }
+
+        if(gameBoard.getPieceColor(move.getStartPosition()) != teamTurn) {
             throw new InvalidMoveException();
         }
 
