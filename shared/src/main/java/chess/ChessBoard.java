@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 import chess.ChessGame.TeamColor;
 import chess.ChessPiece.PieceType;
 
@@ -50,6 +51,23 @@ public class ChessBoard implements Cloneable {
             return null;
         }
         return piece.getTeamColor();
+    }
+
+    /**
+     * Calculates all the positions the chess piece at the position can move to
+     * Does not take into account moves that are illegal due to leaving the king
+     * in danger
+     *
+     * @param position the position to get the piece from
+     * @return Collection of valid moves for the piece, or null if no piece is at
+     * that position
+     */
+    public Collection<ChessMove> getPieceMoves(ChessPosition position) {
+        ChessPiece piece = getPiece(position);
+        if(piece == null) {
+            return null;
+        }
+        return piece.pieceMoves(this, position);
     }
 
     /**
