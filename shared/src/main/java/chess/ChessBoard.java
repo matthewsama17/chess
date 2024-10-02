@@ -39,6 +39,24 @@ public class ChessBoard implements Cloneable {
     }
 
     /**
+     * Executes a chess move, regardless of legality
+     *
+     * @param move The move to be executed
+     */
+    public void movePiece(ChessMove move) {
+        ChessPiece piece = getPiece(move.getStartPosition());
+        if(piece == null) {
+            return;
+        }
+        if(move.getPromotionPiece() != null) {
+            piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+        }
+
+        addPiece(move.getEndPosition(), piece);
+        addPiece(move.getStartPosition(), null);
+    }
+
+    /**
      * Gets the color of a chess piece on the chessboard
      *
      * @param position The position to get the piece from
