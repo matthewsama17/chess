@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.lang.Math;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -503,8 +504,8 @@ public class ChessGame {
      * This class manages the data related to En Passanting.
      */
     private class EnPassanter {
-        private ChessMove enPassantRight = null;
         private ChessMove enPassantLeft = null;
+        private ChessMove enPassantRight = null;
 
         /**
          * Checks if the move made makes an En Passant available.
@@ -514,7 +515,48 @@ public class ChessGame {
          * @param move the move that may make an En Passant available
          */
         public void checkEnPassantOpportunities(ChessMove move) {
+            ChessPiece piece = ChessGame.this.gameBoard.getPiece(move.getEndPosition());
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN
+                    && move.getStartPosition().getColumn() == move.getEndPosition().getColumn()
+                    && Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) >= 2) {
 
+                ChessPosition enPassanterPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn()+1);
+                if(ChessPieceMoveFinder.isOnBoard(enPassanterPosition)
+                        && ChessGame.this.gameBoard.getPiece(enPassanterPosition) != null
+                        && ChessGame.this.gameBoard.getPiece(enPassanterPosition).getPieceType() == ChessPiece.PieceType.PAWN
+                        && ChessGame.this.gameBoard.getPieceColor(enPassanterPosition) != piece.getTeamColor()) {
+
+                    ChessPosition enPassanterEndPosition = new ChessPosition(move.getEndPosition().getRow()-1, move.getEndPosition().getColumn());
+                    if(move.getEndPosition().getRow() < move.getStartPosition().getRow()) {
+                        enPassanterEndPosition = new ChessPosition(move.getEndPosition().getRow()+1, move.getEndPosition().getColumn());
+                    }
+                    enPassantLeft = new ChessMove(enPassanterPosition, enPassanterEndPosition, null);
+                }
+                else {
+                    enPassantLeft = null;
+                }
+
+                enPassanterPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn()-1);
+                if(ChessPieceMoveFinder.isOnBoard(enPassanterPosition)
+                        && ChessGame.this.gameBoard.getPiece(enPassanterPosition) != null
+                        && ChessGame.this.gameBoard.getPiece(enPassanterPosition).getPieceType() == ChessPiece.PieceType.PAWN
+                        && ChessGame.this.gameBoard.getPieceColor(enPassanterPosition) != piece.getTeamColor()) {
+
+                    ChessPosition enPassanterEndPosition = new ChessPosition(move.getEndPosition().getRow()-1, move.getEndPosition().getColumn());
+                    if(move.getEndPosition().getRow() < move.getStartPosition().getRow()) {
+                        enPassanterEndPosition = new ChessPosition(move.getEndPosition().getRow()+1, move.getEndPosition().getColumn());
+                    }
+                    enPassantRight = new ChessMove(enPassanterPosition, enPassanterEndPosition, null);
+                }
+                else {
+                    enPassantRight = null;
+                }
+
+            }
+            else {
+                enPassantLeft = null;
+                enPassantRight = null;
+            }
         }
 
         /**
