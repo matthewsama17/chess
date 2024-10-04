@@ -74,6 +74,9 @@ public class ChessGame {
 
         Collection<ChessMove> moves;
         moves = gameBoard.getPieceMoves(startPosition);
+        moves.addAll(enPassanter.getEnPassantMoves(startPosition));
+        moves.addAll(castler.validCastleMoves(startPosition));
+
         Collection<ChessMove> invalidMoves = new HashSet<ChessMove>();
         for(ChessMove move : moves) {
             ChessBoard trueBoard = gameBoard.clone();
@@ -87,7 +90,6 @@ public class ChessGame {
         }
 
         moves.removeAll(invalidMoves);
-        moves.addAll(castler.validCastleMoves(startPosition));
         return moves;
     }
 
@@ -107,10 +109,15 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
+        if(enPassanter.getEnPassantMoves(move.getStartPosition()).contains(move)) {
+            enPassanter.executeEnPassant(move);
+        }
         if(castler.validCastleMoves(move.getStartPosition()).contains(move)) {
             castler.executeCastle(move);
         }
+
         gameBoard.movePiece(move);
+        enPassanter.checkEnPassantOpportunities(move);
         castler.checkIfKingOrRookMoved(move);
         updateTeamTurn();
     }
@@ -502,7 +509,7 @@ public class ChessGame {
         /**
          * Checks if the move made makes an En Passant available.
          * Updates this classes variables to reflect any changes.
-         * Checks before the move is made
+         * Checks after the move is made
          *
          * @param move the move that may make an En Passant available
          */
@@ -516,16 +523,30 @@ public class ChessGame {
          * @param move the move that was an En Passant
          */
         public void executeEnPassant(ChessMove move) {
-
+            ChessPosition targetPawn = new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn());
+            ChessGame.this.gameBoard.addPiece(targetPawn, null);
         }
 
         /**
-         * Returns any En Passant moves available.
+         * Returns any En Passant moves available from the start position
          *
+         * @param startPosition the piece to check if it can En Passant
          * @return Collection of En Passant moves available.
          */
-        public Collection<ChessMove> getEnPassantMoves() {
+        public Collection<ChessMove> getEnPassantMoves(ChessPosition startPosition) {
+            Collection<ChessMove> moves = new HashSet<>();
 
+            if(enPassantRight != null
+                    && enPassantRight.getStartPosition().equals(startPosition)) {
+                moves.add(enPassantRight);
+            }
+
+            if(enPassantLeft != null
+                    && enPassantLeft.getStartPosition().equals(startPosition)) {
+                moves.add(enPassantLeft);
+            }
+
+            return moves;
         }
     }
 }
