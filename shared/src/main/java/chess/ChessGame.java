@@ -15,9 +15,12 @@ public class ChessGame {
     private TeamColor teamTurn = TeamColor.WHITE;
     private ChessBoard gameBoard;
 
+    private Castler castler;
+
     public ChessGame() {
         gameBoard = new ChessBoard();
         gameBoard.resetBoard();
+        castler = new Castler();
     }
 
     /**
@@ -66,7 +69,7 @@ public class ChessGame {
             return null;
         }
 
-        Collection<ChessMove> moves = new HashSet<ChessMove>();
+        Collection<ChessMove> moves;
         moves = gameBoard.getPieceMoves(startPosition);
         Collection<ChessMove> invalidMoves = new HashSet<ChessMove>();
         for(ChessMove move : moves) {
@@ -81,6 +84,7 @@ public class ChessGame {
         }
 
         moves.removeAll(invalidMoves);
+        moves.addAll(castler.validCastleMoves(startPosition));
         return moves;
     }
 
@@ -100,7 +104,11 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
+        if(castler.validCastleMoves(move.getStartPosition()).contains(move)) {
+            castler.executeCastle(move);
+        }
         gameBoard.movePiece(move);
+        castler.checkIfKingOrRookMoved(move);
         updateTeamTurn();
     }
 
@@ -221,6 +229,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         gameBoard = board;
+        castler = new Castler();
     }
 
     /**
@@ -245,5 +254,234 @@ public class ChessGame {
         int result = Objects.hashCode(teamTurn);
         result = 31 * result + Objects.hashCode(gameBoard);
         return result;
+    }
+
+    public class Castler {
+
+        public final static ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        public final static ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        public final static ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        public final static ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+
+        public final static ChessPosition whiteKingStart = new ChessPosition(1,5);
+        public final static ChessPosition blackKingStart = new ChessPosition(8,5);
+        public final static ChessPosition whiteLeftRookStart = new ChessPosition(1,1);
+        public final static ChessPosition whiteRightRookStart = new ChessPosition(1,8);
+        public final static ChessPosition blackLeftRookStart = new ChessPosition(8,1);
+        public final static ChessPosition blackRightRookStart = new ChessPosition(8,8);
+
+        public final static ChessMove whiteLeftCastle = new ChessMove(whiteKingStart, new ChessPosition(1,3), null);
+        public final static ChessMove whiteRightCastle = new ChessMove(whiteKingStart, new ChessPosition(1,7), null);
+        public final static ChessMove blackLeftCastle = new ChessMove(blackKingStart, new ChessPosition(8,3), null);
+        public final static ChessMove blackRightCastle = new ChessMove(blackKingStart, new ChessPosition(8,7), null);
+
+        private boolean whiteKingHasMoved = false;
+        private boolean blackKingHasMoved = false;
+        private boolean whiteLeftRookHasMoved = false;
+        private boolean whiteRightRookHasMoved = false;
+        private boolean blackLeftRookHasMoved = false;
+        private boolean blackRightRookHasMoved = false;
+
+        /**
+         * Updates Castler variables based on whether the given move moved a king or
+         * rook out of its starting position.
+         *
+         * @param move the move to check
+         */
+        public void checkIfKingOrRookMoved(ChessMove move) {
+            if(move.getStartPosition().equals(whiteKingStart)) {
+                whiteKingHasMoved = true;
+            }
+            if(move.getStartPosition().equals(blackKingStart)) {
+                blackKingHasMoved = true;
+            }
+            if(move.getStartPosition().equals(whiteLeftRookStart)) {
+                whiteLeftRookHasMoved = true;
+            }
+            if(move.getStartPosition().equals(whiteRightRookStart)) {
+                whiteRightRookHasMoved = true;
+            }
+            if(move.getStartPosition().equals(blackLeftRookStart)) {
+                blackLeftRookHasMoved = true;
+            }
+            if(move.getStartPosition().equals(blackRightRookStart)) {
+                blackRightRookHasMoved = true;
+            }
+        }
+
+        /**
+         * Gets valid castle moves for the piece at the given location
+         *
+         * @param startPosition the position of the piece to get moves for
+         * @return a collection of valid castle moves for the piece
+         */
+        public Collection<ChessMove> validCastleMoves(ChessPosition startPosition) {
+            if(startPosition.equals(whiteKingStart)
+                    && !whiteKingHasMoved
+                    && ChessGame.this.gameBoard.getPiece(whiteKingStart) != null
+                    && ChessGame.this.gameBoard.getPiece(whiteKingStart).equals(whiteKing)) {
+
+                return validWhiteCastleMoves();
+            }
+
+            if(startPosition.equals(blackKingStart)
+                    && !blackKingHasMoved
+                    && ChessGame.this.gameBoard.getPiece(blackKingStart) != null
+                    && ChessGame.this.gameBoard.getPiece(blackKingStart).equals(blackKing)) {
+                return validBlackCastleMoves();
+            }
+
+            return new HashSet<>();
+        }
+
+        /**
+         * Gets valid castle moves for the white king
+         * Assumes white king has not moved
+         *
+         * @return a collection of valid castle moves for the white king
+         */
+        private Collection<ChessMove> validWhiteCastleMoves() {
+            Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+            if(!whiteLeftRookHasMoved
+                    && ChessGame.this.gameBoard.getPiece(whiteLeftRookStart) != null
+                    && ChessGame.this.gameBoard.getPiece(whiteLeftRookStart).equals(whiteRook)
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,2)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,3)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,4)) == null) {
+                boolean canCastle = true;
+                ChessBoard trueBoard = ChessGame.this.gameBoard.clone();
+
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteKingStart, new ChessPosition(1,4), null));
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(new ChessPosition(1,4), new ChessPosition(1,3), null));
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+
+                if(canCastle) {
+                    moves.add(whiteLeftCastle);
+                }
+                ChessGame.this.gameBoard = trueBoard;
+            }
+
+            if(!whiteRightRookHasMoved
+                    && ChessGame.this.gameBoard.getPiece(whiteRightRookStart) != null
+                    && ChessGame.this.gameBoard.getPiece(whiteRightRookStart).equals(whiteRook)
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,6)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,7)) == null) {
+                boolean canCastle = true;
+                ChessBoard trueBoard = ChessGame.this.gameBoard.clone();
+
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteKingStart, new ChessPosition(1,6), null));
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(new ChessPosition(1,6), new ChessPosition(1,7), null));
+                if(isInCheck(TeamColor.WHITE)) {
+                    canCastle = false;
+                }
+
+                if(canCastle) {
+                    moves.add(whiteRightCastle);
+                }
+                ChessGame.this.gameBoard = trueBoard;
+            }
+
+            return moves;
+        }
+
+        /**
+         * Gets valid castle moves for the black king
+         * Assumes black king has not moved
+         *
+         * @return a collection of valid castle moves for the black king
+         */
+        private Collection<ChessMove> validBlackCastleMoves() {
+            Collection<ChessMove> moves = new HashSet<ChessMove>();
+
+            if(!blackLeftRookHasMoved
+                    && ChessGame.this.gameBoard.getPiece(blackLeftRookStart) != null
+                    && ChessGame.this.gameBoard.getPiece(blackLeftRookStart).equals(blackRook)
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,2)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,3)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,4)) == null) {
+                boolean canCastle = true;
+                ChessBoard trueBoard = ChessGame.this.gameBoard.clone();
+
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(blackKingStart, new ChessPosition(8,4), null));
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(new ChessPosition(8,4), new ChessPosition(8,3), null));
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+
+                if(canCastle) {
+                    moves.add(blackLeftCastle);
+                }
+                ChessGame.this.gameBoard = trueBoard;
+            }
+
+            if(!blackRightRookHasMoved
+                    && ChessGame.this.gameBoard.getPiece(blackRightRookStart) != null
+                    && ChessGame.this.gameBoard.getPiece(blackRightRookStart).equals(blackRook)
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,6)) == null
+                    && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,7)) == null) {
+                boolean canCastle = true;
+                ChessBoard trueBoard = ChessGame.this.gameBoard.clone();
+
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(blackKingStart, new ChessPosition(8,6), null));
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+                ChessGame.this.gameBoard.movePiece(new ChessMove(new ChessPosition(8,6), new ChessPosition(8,7), null));
+                if(isInCheck(TeamColor.BLACK)) {
+                    canCastle = false;
+                }
+
+                if(canCastle) {
+                    moves.add(blackRightCastle);
+                }
+                ChessGame.this.gameBoard = trueBoard;
+            }
+
+            return moves;
+        }
+
+        /**
+         * Moves rook if a castle was executed
+         *
+         * @param move the move that might have been a castle
+         */
+        public void executeCastle(ChessMove move) {
+            if(move.equals(whiteLeftCastle)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteLeftRookStart, new ChessPosition(1,4), null));
+            }
+            if(move.equals(whiteRightCastle)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteRightRookStart, new ChessPosition(1,6), null));
+            }
+            if(move.equals(blackLeftCastle)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(blackLeftRookStart, new ChessPosition(8,4), null));
+            }
+            if(move.equals(blackRightCastle)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(blackRightRookStart, new ChessPosition(8,6), null));
+            }
+        }
     }
 }
