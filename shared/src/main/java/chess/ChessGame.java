@@ -16,11 +16,14 @@ public class ChessGame {
     private ChessBoard gameBoard;
 
     private Castler castler;
+    private EnPassanter enPassanter;
 
     public ChessGame() {
         gameBoard = new ChessBoard();
         gameBoard.resetBoard();
+
         castler = new Castler();
+        enPassanter = new EnPassanter();
     }
 
     /**
@@ -230,6 +233,7 @@ public class ChessGame {
     public void setBoard(ChessBoard board) {
         gameBoard = board;
         castler = new Castler();
+        enPassanter = new EnPassanter();
     }
 
     /**
@@ -256,7 +260,10 @@ public class ChessGame {
         return result;
     }
 
-    public class Castler {
+    /**
+     * This class manages the data related to castling.
+     */
+    private class Castler {
 
         public final static ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
         public final static ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
@@ -483,5 +490,13 @@ public class ChessGame {
                 ChessGame.this.gameBoard.movePiece(new ChessMove(blackRightRookStart, new ChessPosition(8,6), null));
             }
         }
+    }
+
+    /**
+     * This class manages the data related to En Passanting
+     */
+    private class EnPassanter {
+        ChessMove enPassantRight = null;
+        ChessMove enPassantLeft = null;
     }
 }
