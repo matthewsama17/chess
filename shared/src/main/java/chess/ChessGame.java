@@ -493,10 +493,39 @@ public class ChessGame {
     }
 
     /**
-     * This class manages the data related to En Passanting
+     * This class manages the data related to En Passanting.
      */
     private class EnPassanter {
-        ChessMove enPassantRight = null;
-        ChessMove enPassantLeft = null;
+        private ChessMove enPassantRight = null;
+        private ChessMove enPassantLeft = null;
+
+        /**
+         * Checks if the move made makes an En Passant available.
+         * Updates this classes variables to reflect any changes.
+         * Checks before the move is made
+         *
+         * @param move the move that may make an En Passant available
+         */
+        public void checkEnPassantOpportunities(ChessMove move) {
+
+        }
+
+        /**
+         * Removes the pawn that was captured by an En Passant
+         *
+         * @param move the move that was an En Passant
+         */
+        public void executeEnPassant(ChessMove move) {
+
+        }
+
+        /**
+         * Returns any En Passant moves available.
+         *
+         * @return Collection of En Passant moves available.
+         */
+        public Collection<ChessMove> getEnPassantMoves() {
+
+        }
     }
 }
