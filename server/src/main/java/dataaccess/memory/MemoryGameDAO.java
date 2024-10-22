@@ -26,8 +26,9 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public List<GameData> listGames() {
-        return dataset;
+    public GameData[] listGames() {
+        GameData[] games = new GameData[dataset.size()];
+        return dataset.toArray(games);
     }
 
     @Override
