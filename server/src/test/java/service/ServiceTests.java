@@ -8,45 +8,52 @@ import request.*;
 import result.*;
 
 public class ServiceTests {
+    static public ClearService clearService = new ClearService();
+    static public RegisterService registerService = new RegisterService();
+    static public LoginService loginService = new LoginService();
+    static public LogoutService logoutService = new LogoutService();
+    static public ListGamesService listGamesService = new ListGamesService();
+    static public CreateGameService createGameService = new CreateGameService();
+    static public JoinGameService joinGameService = new JoinGameService();
 
     @AfterEach
     public void clearForTests() {
-        ClearService.clear();
+        clearService.clear();
     }
 
     @Test
-    public void testRegister() {
+    public void testRegister() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
-        LoginResult loginResult = RegisterService.register(registerRequest);
+        LoginResult loginResult = registerService.register(registerRequest);
 
         Assertions.assertEquals(loginResult.username(), registerRequest.username());
     }
 
     @Test
-    public void testRegisterFail() {
+    public void testRegisterFail() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew2", "anotherGoodPassword", "m.3herron@gmail.com");
-        RegisterService.register(registerRequest);
+        registerService.register(registerRequest);
 
-        Assertions.assertThrows(ServiceException.class, () -> RegisterService.register(registerRequest));
+        Assertions.assertThrows(ServiceException.class, () -> registerService.register(registerRequest));
     }
 
     @Test
-    public void testClear() {
+    public void testClear() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew3", "aGoodPassword", "mherron239@gmail.com");
-        RegisterService.register(registerRequest);
+        registerService.register(registerRequest);
 
-        ClearService.clear();
+        clearService.clear();
 
-        Assertions.assertDoesNotThrow(() -> RegisterService.register(registerRequest));
+        Assertions.assertDoesNotThrow(() -> registerService.register(registerRequest));
     }
 
     @Test
-    public void testLogin() {
+    public void testLogin() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
-        RegisterService.register(registerRequest);
+        registerService.register(registerRequest);
 
         LoginRequest loginRequest = new LoginRequest(registerRequest.username(), registerRequest.password());
-        LoginResult loginResult = LoginService.login(loginRequest);
+        LoginResult loginResult = loginService.login(loginRequest);
 
         Assertions.assertEquals(loginResult.username(), registerRequest.username());
     }
@@ -54,31 +61,33 @@ public class ServiceTests {
     @Test
     public void testLoginFail() {
         LoginRequest loginRequest = new LoginRequest("Matthew", "aBadPassword");
-        Assertions.assertThrows(ServiceException.class, () -> LoginService.login(loginRequest));
+        Assertions.assertThrows(ServiceException.class, () -> loginService.login(loginRequest));
     }
 
     @Test
-    public void testLogout() {
+    public void testLogout() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
-        LoginResult loginResult = RegisterService.register(registerRequest);
+        LoginResult loginResult = registerService.register(registerRequest);
 
-        LogoutService.logout(loginResult.authToken());
-        Assertions.assertThrows(ServiceException.class, () -> LoginService.login(loginRequest));
+        logoutService.logout(loginResult.authToken());
+
+        LoginRequest loginRequest = new LoginRequest(registerRequest.username(), registerRequest.password());
+        Assertions.assertThrows(ServiceException.class, () -> loginService.login(loginRequest));
     }
 
     @Test
     public void testLogoutFail() {
         String authToken = "aDumbAuthToken";
 
-        Assertions.assertThrows(ServiceException.class, () -> LogoutService.logout(authToken));
+        Assertions.assertThrows(ServiceException.class, () -> logoutService.logout(authToken));
     }
 
     @Test
-    public void testCreateGame() {
+    public void testCreateGame() throws ServiceException {
         String authToken = initializeUser();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
 
-        Assertions.assertDoesNotThrow(() -> CreateGameService.createGame(authToken, createGameRequest));
+        Assertions.assertDoesNotThrow(() -> createGameService.createGame(authToken, createGameRequest));
     }
 
     @Test
@@ -86,52 +95,52 @@ public class ServiceTests {
         String authToken = "aDumbAuthToken";
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
 
-        Assertions.assertThrows(ServiceException.class, () -> CreateGameService.createGame(authToken, createGameRequest));
+        Assertions.assertThrows(ServiceException.class, () -> createGameService.createGame(authToken, createGameRequest));
     }
 
     @Test
-    public void testListGames() {
+    public void testListGames() throws ServiceException {
         String authToken = initializeUser();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
-        CreateGameService.createGame(createGameRequest);
+        createGameService.createGame(authToken, createGameRequest);
 
-        Assertions.assertEquals(ListGamesService.listGames(authToken).games()[0].gameName(), createGameRequest.gameName());
+        Assertions.assertEquals(listGamesService.listGames(authToken).games()[0].gameName(), createGameRequest.gameName());
     }
 
     @Test
     public void testListGamesFail() {
         String authToken = "aDumbAuthToken";
 
-        Assertions.assertThrows(ServiceException.class, ListGamesService.listGames(authToken));
+        Assertions.assertThrows(ServiceException.class, () -> listGamesService.listGames(authToken));
     }
 
     @Test
-    public void testJoinGame() {
+    public void testJoinGame() throws ServiceException {
         String authToken = initializeUser();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
-        CreateGameResult createGameResult = CreateGameService.createGame(createGameRequest);
+        CreateGameResult createGameResult = createGameService.createGame(authToken, createGameRequest);
 
         JoinGameRequest joinGameRequest = new JoinGameRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID());
-        JoinGameService.joinGame(authToken, joinGameRequest);
+        joinGameService.joinGame(authToken, joinGameRequest);
 
-        Assertions.assertEquals("Matthew", ListGamesService.listGames(authToken).games()[0].whiteUsername());
+        Assertions.assertEquals("Matthew", listGamesService.listGames(authToken).games()[0].whiteUsername());
     }
 
     @Test
-    public void testJoinGameFail() {
+    public void testJoinGameFail() throws ServiceException {
         String authToken = initializeUser();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
-        CreateGameResult createGameResult = CreateGameService.createGame(createGameRequest);
+        CreateGameResult createGameResult = createGameService.createGame(authToken, createGameRequest);
 
         JoinGameRequest joinGameRequest = new JoinGameRequest(ChessGame.TeamColor.WHITE, createGameResult.gameID());
-        JoinGameService.joinGame(authToken, joinGameRequest);
+        joinGameService.joinGame(authToken, joinGameRequest);
 
-        Assertions.assertThrows(ServiceException.class, () -> JoinGameService.joinGame(authToken, joinGameRequest));
+        Assertions.assertThrows(ServiceException.class, () -> joinGameService.joinGame(authToken, joinGameRequest));
     }
 
-    private String initializeUser() {
+    private String initializeUser() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
-        LoginResult loginResult = RegisterService.register(registerRequest);
+        LoginResult loginResult = registerService.register(registerRequest);
         return loginResult.authToken();
     }
 }
