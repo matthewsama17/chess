@@ -1,7 +1,10 @@
 import chess.*;
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
+import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryUserDAO;
+import model.AuthData;
 import model.UserData;
 import server.Server;
 
@@ -23,6 +26,14 @@ public class Main {
         System.out.println(userDAO.getUser("Something Else"));
         userDAO.clear();
         System.out.println(userDAO.getUser("Matthew"));
+
+        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthData authData = new AuthData("234", "Matthew");
+        authDAO.createAuth(authData);
+        System.out.println(authDAO.getAuth("234").username());
+        System.out.println(authDAO.getAuth("Something else"));
+        authDAO.deleteAuth(authData);
+        System.out.println(authDAO.getAuth("234"));
 
         Server server = new Server();
         server.run(8080);
