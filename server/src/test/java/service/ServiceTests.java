@@ -69,10 +69,9 @@ public class ServiceTests {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
         LoginResult loginResult = registerService.register(registerRequest);
 
-        logoutService.logout(loginResult.authToken());
+        Assertions.assertDoesNotThrow(() -> logoutService.logout(loginResult.authToken()));
 
-        LoginRequest loginRequest = new LoginRequest(registerRequest.username(), registerRequest.password());
-        Assertions.assertThrows(ServiceException.class, () -> loginService.login(loginRequest));
+        Assertions.assertThrows(ServiceException.class, () -> logoutService.logout(loginResult.authToken()));
     }
 
     @Test
