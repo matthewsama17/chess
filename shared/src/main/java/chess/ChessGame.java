@@ -5,12 +5,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.lang.Math;
 
-/**
- * For a class that can manage a chess game, making moves on a board
- * <p>
- * Note: You can add to this class, but you may not alter
- * signature of the existing methods.
- */
 public class ChessGame {
 
     private TeamColor teamTurn = TeamColor.WHITE;
@@ -27,18 +21,10 @@ public class ChessGame {
         enPassanter = new EnPassanter();
     }
 
-    /**
-     * @return Which team's turn it is
-     */
     public TeamColor getTeamTurn() {
         return teamTurn;
     }
 
-    /**
-     * Set's which teams turn it is
-     *
-     * @param team the team whose turn it is
-     */
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
     }
@@ -52,21 +38,11 @@ public class ChessGame {
         }
     }
 
-    /**
-     * Enum identifying the 2 possible teams in a chess game
-     */
     public enum TeamColor {
         WHITE,
         BLACK
     }
 
-    /**
-     * Gets a valid moves for a piece at the given location
-     *
-     * @param startPosition the piece to get valid moves for
-     * @return Set of valid moves for requested piece, or null if no piece at
-     * startPosition
-     */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         TeamColor pieceColor = gameBoard.getPieceColor(startPosition);
         if(pieceColor == null) {
@@ -94,12 +70,6 @@ public class ChessGame {
         return moves;
     }
 
-    /**
-     * Makes a move in a chess game
-     *
-     * @param move chess move to preform
-     * @throws InvalidMoveException if move is invalid
-     */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(validMoves == null || !validMoves.contains(move)) {
@@ -123,12 +93,6 @@ public class ChessGame {
         updateTeamTurn();
     }
 
-    /**
-     * returns the location of the given team's king
-     *
-     * @param teamColor which king to find
-     * @return the position of the king of the given team
-     */
     private ChessPosition findKing(TeamColor teamColor) {
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
@@ -144,13 +108,6 @@ public class ChessGame {
         return new ChessPosition(0,0);
     }
 
-    /**
-     * returns all moves that can be made by a piece on the board
-     * Does not take into account moves that are illegal due to leaving the king
-     * in danger
-     *
-     * @return Collection of all ChessMoves possible
-     */
     private Collection<ChessMove> allMoves() {
         Collection<ChessMove> allMoves = new HashSet<>();
 
@@ -167,12 +124,6 @@ public class ChessGame {
         return allMoves;
     }
 
-    /**
-     * Determines if the given team is in check
-     *
-     * @param teamColor which team to check for check
-     * @return True if the specified team is in check
-     */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = findKing(teamColor);
         Collection<ChessMove> allMoves = allMoves();
@@ -185,12 +136,6 @@ public class ChessGame {
         return false;
     }
 
-    /**
-     * Determines if the given team has no valid moves
-     *
-     * @param teamColor which team to check for valid moves
-     * @return True if the specified team has no valid moves
-     */
     private boolean hasNoMoves(TeamColor teamColor) {
         boolean thereAreNoMoves = true;
 
@@ -212,48 +157,24 @@ public class ChessGame {
         return thereAreNoMoves;
     }
 
-    /**
-     * Determines if the given team is in checkmate
-     *
-     * @param teamColor which team to check for checkmate
-     * @return True if the specified team is in checkmate
-     */
     public boolean isInCheckmate(TeamColor teamColor) {
         return isInCheck(teamColor) && hasNoMoves(teamColor);
     }
 
-    /**
-     * Determines if the given team is in stalemate, which here is defined as having
-     * no valid moves
-     *
-     * @param teamColor which team to check for stalemate
-     * @return True if the specified team is in stalemate, otherwise false
-     */
     public boolean isInStalemate(TeamColor teamColor) {
         return !isInCheck(teamColor) && hasNoMoves(teamColor);
     }
 
-    /**
-     * Sets this game's chessboard with a given board
-     *
-     * @param board the new board to use
-     */
     public void setBoard(ChessBoard board) {
         gameBoard = board;
         castler = new Castler();
         enPassanter = new EnPassanter();
     }
 
-    /**
-     * Gets the current chessboard
-     *
-     * @return the chessboard
-     */
     public ChessBoard getBoard() {
         return gameBoard;
     }
 
-    @Override
     public final boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -265,16 +186,12 @@ public class ChessGame {
         return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
     }
 
-    @Override
     public int hashCode() {
         int result = Objects.hashCode(teamTurn);
         result = 31 * result + Objects.hashCode(gameBoard);
         return result;
     }
 
-    /**
-     * This class manages the data related to castling.
-     */
     private class Castler {
 
         public final static ChessPiece WHITE_KING = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
@@ -301,12 +218,6 @@ public class ChessGame {
         private boolean blackLeftRookHasMoved = false;
         private boolean blackRightRookHasMoved = false;
 
-        /**
-         * Updates Castler variables based on whether the given move moved a king or
-         * rook out of its starting position.
-         *
-         * @param move the move to check
-         */
         public void checkIfKingOrRookMoved(ChessMove move) {
             if(move.getStartPosition().equals(WHITE_KING_START)) {
                 whiteKingHasMoved = true;
@@ -328,12 +239,6 @@ public class ChessGame {
             }
         }
 
-        /**
-         * Gets valid castle moves for the piece at the given location
-         *
-         * @param startPosition the position of the piece to get moves for
-         * @return a collection of valid castle moves for the piece
-         */
         public Collection<ChessMove> validCastleMoves(ChessPosition startPosition) {
             if(startPosition.equals(WHITE_KING_START)
                     && !whiteKingHasMoved
@@ -353,12 +258,6 @@ public class ChessGame {
             return new HashSet<>();
         }
 
-        /**
-         * Gets valid castle moves for the white king
-         * Assumes white king has not moved
-         *
-         * @return a collection of valid castle moves for the white king
-         */
         private Collection<ChessMove> validWhiteCastleMoves() {
             Collection<ChessMove> moves = new HashSet<ChessMove>();
 
@@ -418,12 +317,6 @@ public class ChessGame {
             return moves;
         }
 
-        /**
-         * Gets valid castle moves for the black king
-         * Assumes black king has not moved
-         *
-         * @return a collection of valid castle moves for the black king
-         */
         private Collection<ChessMove> validBlackCastleMoves() {
             Collection<ChessMove> moves = new HashSet<ChessMove>();
 
@@ -483,11 +376,6 @@ public class ChessGame {
             return moves;
         }
 
-        /**
-         * Moves rook if a castle was executed
-         *
-         * @param move the move that might have been a castle
-         */
         public void executeCastle(ChessMove move) {
             if(move.equals(WHITE_LEFT_CASTLE)) {
                 ChessGame.this.gameBoard.movePiece(new ChessMove(WHITE_LEFT_ROOK_START, new ChessPosition(1,4), null));
@@ -504,20 +392,10 @@ public class ChessGame {
         }
     }
 
-    /**
-     * This class manages the data related to En Passanting.
-     */
     private class EnPassanter {
         private ChessMove enPassantLeft = null;
         private ChessMove enPassantRight = null;
 
-        /**
-         * Checks if the move made makes an En Passant available.
-         * Updates this classes variables to reflect any changes.
-         * Checks after the move is made
-         *
-         * @param move the move that may make an En Passant available
-         */
         public void checkEnPassantOpportunities(ChessMove move) {
             ChessPiece piece = ChessGame.this.gameBoard.getPiece(move.getEndPosition());
             if(piece.getPieceType() == ChessPiece.PieceType.PAWN
@@ -563,22 +441,11 @@ public class ChessGame {
             }
         }
 
-        /**
-         * Removes the pawn that was captured by an En Passant
-         *
-         * @param move the move that was an En Passant
-         */
         public void executeEnPassant(ChessMove move) {
             ChessPosition targetPawn = new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn());
             ChessGame.this.gameBoard.addPiece(targetPawn, null);
         }
 
-        /**
-         * Returns any En Passant moves available from the start position
-         *
-         * @param startPosition the piece to check if it can En Passant
-         * @return Collection of En Passant moves available.
-         */
         public Collection<ChessMove> getEnPassantMoves(ChessPosition startPosition) {
             Collection<ChessMove> moves = new HashSet<>();
 
