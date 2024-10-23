@@ -5,7 +5,9 @@ import result.ListGamesResult;
 public class ListGamesService extends Service {
 
     public ListGamesResult listGames(String authToken) throws ServiceException {
-        return null;
+        checkAuthorization(authToken);
+
+        return new ListGamesResult(gameDAO.listGames());
     }
 
 }
