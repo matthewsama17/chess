@@ -10,7 +10,7 @@ public class CreateGameService extends Service {
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws ServiceException {
         checkAuthorization(authToken);
 
-        int gameID = generateGameID();
+        int gameID = gameDAO.generateGameID();
         GameData gameData = new GameData(gameID, null, null, createGameRequest.gameName(),new chess.ChessGame());
         gameDAO.createGame(gameData);
 

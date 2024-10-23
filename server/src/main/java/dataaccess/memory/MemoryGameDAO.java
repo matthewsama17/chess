@@ -8,11 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemoryGameDAO implements GameDAO {
+
+    static public int lastGameID = 0;
     static List<GameData> dataset = new ArrayList<>();
 
     @Override
     public void createGame(GameData gameData) {
         dataset.add(gameData);
+    }
+
+    @Override
+    public int generateGameID() {
+        lastGameID += 1;
+        return lastGameID;
     }
 
     @Override
