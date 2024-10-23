@@ -255,8 +255,12 @@ public class ChessGame {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChessGame chessGame)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChessGame chessGame)) {
+            return false;
+        }
 
         return teamTurn == chessGame.teamTurn && Objects.equals(gameBoard, chessGame.gameBoard);
     }
@@ -273,22 +277,22 @@ public class ChessGame {
      */
     private class Castler {
 
-        public final static ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        public final static ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-        public final static ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        public final static ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        public final static ChessPiece WHITE_KING = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        public final static ChessPiece BLACK_KING = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        public final static ChessPiece WHITE_ROOK = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        public final static ChessPiece BLACK_ROOK = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
-        public final static ChessPosition whiteKingStart = new ChessPosition(1,5);
-        public final static ChessPosition blackKingStart = new ChessPosition(8,5);
-        public final static ChessPosition whiteLeftRookStart = new ChessPosition(1,1);
-        public final static ChessPosition whiteRightRookStart = new ChessPosition(1,8);
-        public final static ChessPosition blackLeftRookStart = new ChessPosition(8,1);
-        public final static ChessPosition blackRightRookStart = new ChessPosition(8,8);
+        public final static ChessPosition WHITE_KING_START = new ChessPosition(1,5);
+        public final static ChessPosition BLACK_KING_START = new ChessPosition(8,5);
+        public final static ChessPosition WHITE_LEFT_ROOK_START = new ChessPosition(1,1);
+        public final static ChessPosition WHITE_RIGHT_ROOK_START = new ChessPosition(1,8);
+        public final static ChessPosition BLACK_LEFT_ROOK_START = new ChessPosition(8,1);
+        public final static ChessPosition BLACK_RIGHT_ROOK_START = new ChessPosition(8,8);
 
-        public final static ChessMove whiteLeftCastle = new ChessMove(whiteKingStart, new ChessPosition(1,3), null);
-        public final static ChessMove whiteRightCastle = new ChessMove(whiteKingStart, new ChessPosition(1,7), null);
-        public final static ChessMove blackLeftCastle = new ChessMove(blackKingStart, new ChessPosition(8,3), null);
-        public final static ChessMove blackRightCastle = new ChessMove(blackKingStart, new ChessPosition(8,7), null);
+        public final static ChessMove WHITE_LEFT_CASTLE = new ChessMove(WHITE_KING_START, new ChessPosition(1,3), null);
+        public final static ChessMove WHITE_RIGHT_CASTLE = new ChessMove(WHITE_KING_START, new ChessPosition(1,7), null);
+        public final static ChessMove BLACK_LEFT_CASTLE = new ChessMove(BLACK_KING_START, new ChessPosition(8,3), null);
+        public final static ChessMove BLACK_RIGHT_CASTLE = new ChessMove(BLACK_KING_START, new ChessPosition(8,7), null);
 
         private boolean whiteKingHasMoved = false;
         private boolean blackKingHasMoved = false;
@@ -304,22 +308,22 @@ public class ChessGame {
          * @param move the move to check
          */
         public void checkIfKingOrRookMoved(ChessMove move) {
-            if(move.getStartPosition().equals(whiteKingStart)) {
+            if(move.getStartPosition().equals(WHITE_KING_START)) {
                 whiteKingHasMoved = true;
             }
-            if(move.getStartPosition().equals(blackKingStart)) {
+            if(move.getStartPosition().equals(BLACK_KING_START)) {
                 blackKingHasMoved = true;
             }
-            if(move.getStartPosition().equals(whiteLeftRookStart)) {
+            if(move.getStartPosition().equals(WHITE_LEFT_ROOK_START)) {
                 whiteLeftRookHasMoved = true;
             }
-            if(move.getStartPosition().equals(whiteRightRookStart)) {
+            if(move.getStartPosition().equals(WHITE_RIGHT_ROOK_START)) {
                 whiteRightRookHasMoved = true;
             }
-            if(move.getStartPosition().equals(blackLeftRookStart)) {
+            if(move.getStartPosition().equals(BLACK_LEFT_ROOK_START)) {
                 blackLeftRookHasMoved = true;
             }
-            if(move.getStartPosition().equals(blackRightRookStart)) {
+            if(move.getStartPosition().equals(BLACK_RIGHT_ROOK_START)) {
                 blackRightRookHasMoved = true;
             }
         }
@@ -331,18 +335,18 @@ public class ChessGame {
          * @return a collection of valid castle moves for the piece
          */
         public Collection<ChessMove> validCastleMoves(ChessPosition startPosition) {
-            if(startPosition.equals(whiteKingStart)
+            if(startPosition.equals(WHITE_KING_START)
                     && !whiteKingHasMoved
-                    && ChessGame.this.gameBoard.getPiece(whiteKingStart) != null
-                    && ChessGame.this.gameBoard.getPiece(whiteKingStart).equals(whiteKing)) {
+                    && ChessGame.this.gameBoard.getPiece(WHITE_KING_START) != null
+                    && ChessGame.this.gameBoard.getPiece(WHITE_KING_START).equals(WHITE_KING)) {
 
                 return validWhiteCastleMoves();
             }
 
-            if(startPosition.equals(blackKingStart)
+            if(startPosition.equals(BLACK_KING_START)
                     && !blackKingHasMoved
-                    && ChessGame.this.gameBoard.getPiece(blackKingStart) != null
-                    && ChessGame.this.gameBoard.getPiece(blackKingStart).equals(blackKing)) {
+                    && ChessGame.this.gameBoard.getPiece(BLACK_KING_START) != null
+                    && ChessGame.this.gameBoard.getPiece(BLACK_KING_START).equals(BLACK_KING)) {
                 return validBlackCastleMoves();
             }
 
@@ -359,8 +363,8 @@ public class ChessGame {
             Collection<ChessMove> moves = new HashSet<ChessMove>();
 
             if(!whiteLeftRookHasMoved
-                    && ChessGame.this.gameBoard.getPiece(whiteLeftRookStart) != null
-                    && ChessGame.this.gameBoard.getPiece(whiteLeftRookStart).equals(whiteRook)
+                    && ChessGame.this.gameBoard.getPiece(WHITE_LEFT_ROOK_START) != null
+                    && ChessGame.this.gameBoard.getPiece(WHITE_LEFT_ROOK_START).equals(WHITE_ROOK)
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,2)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,3)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,4)) == null) {
@@ -370,7 +374,7 @@ public class ChessGame {
                 if(isInCheck(TeamColor.WHITE)) {
                     canCastle = false;
                 }
-                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteKingStart, new ChessPosition(1,4), null));
+                ChessGame.this.gameBoard.movePiece(new ChessMove(WHITE_KING_START, new ChessPosition(1,4), null));
                 if(isInCheck(TeamColor.WHITE)) {
                     canCastle = false;
                 }
@@ -380,14 +384,14 @@ public class ChessGame {
                 }
 
                 if(canCastle) {
-                    moves.add(whiteLeftCastle);
+                    moves.add(WHITE_LEFT_CASTLE);
                 }
                 ChessGame.this.gameBoard = trueBoard;
             }
 
             if(!whiteRightRookHasMoved
-                    && ChessGame.this.gameBoard.getPiece(whiteRightRookStart) != null
-                    && ChessGame.this.gameBoard.getPiece(whiteRightRookStart).equals(whiteRook)
+                    && ChessGame.this.gameBoard.getPiece(WHITE_RIGHT_ROOK_START) != null
+                    && ChessGame.this.gameBoard.getPiece(WHITE_RIGHT_ROOK_START).equals(WHITE_ROOK)
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,6)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(1,7)) == null) {
                 boolean canCastle = true;
@@ -396,7 +400,7 @@ public class ChessGame {
                 if(isInCheck(TeamColor.WHITE)) {
                     canCastle = false;
                 }
-                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteKingStart, new ChessPosition(1,6), null));
+                ChessGame.this.gameBoard.movePiece(new ChessMove(WHITE_KING_START, new ChessPosition(1,6), null));
                 if(isInCheck(TeamColor.WHITE)) {
                     canCastle = false;
                 }
@@ -406,7 +410,7 @@ public class ChessGame {
                 }
 
                 if(canCastle) {
-                    moves.add(whiteRightCastle);
+                    moves.add(WHITE_RIGHT_CASTLE);
                 }
                 ChessGame.this.gameBoard = trueBoard;
             }
@@ -424,8 +428,8 @@ public class ChessGame {
             Collection<ChessMove> moves = new HashSet<ChessMove>();
 
             if(!blackLeftRookHasMoved
-                    && ChessGame.this.gameBoard.getPiece(blackLeftRookStart) != null
-                    && ChessGame.this.gameBoard.getPiece(blackLeftRookStart).equals(blackRook)
+                    && ChessGame.this.gameBoard.getPiece(BLACK_LEFT_ROOK_START) != null
+                    && ChessGame.this.gameBoard.getPiece(BLACK_LEFT_ROOK_START).equals(BLACK_ROOK)
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,2)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,3)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,4)) == null) {
@@ -435,7 +439,7 @@ public class ChessGame {
                 if(isInCheck(TeamColor.BLACK)) {
                     canCastle = false;
                 }
-                ChessGame.this.gameBoard.movePiece(new ChessMove(blackKingStart, new ChessPosition(8,4), null));
+                ChessGame.this.gameBoard.movePiece(new ChessMove(BLACK_KING_START, new ChessPosition(8,4), null));
                 if(isInCheck(TeamColor.BLACK)) {
                     canCastle = false;
                 }
@@ -445,14 +449,14 @@ public class ChessGame {
                 }
 
                 if(canCastle) {
-                    moves.add(blackLeftCastle);
+                    moves.add(BLACK_LEFT_CASTLE);
                 }
                 ChessGame.this.gameBoard = trueBoard;
             }
 
             if(!blackRightRookHasMoved
-                    && ChessGame.this.gameBoard.getPiece(blackRightRookStart) != null
-                    && ChessGame.this.gameBoard.getPiece(blackRightRookStart).equals(blackRook)
+                    && ChessGame.this.gameBoard.getPiece(BLACK_RIGHT_ROOK_START) != null
+                    && ChessGame.this.gameBoard.getPiece(BLACK_RIGHT_ROOK_START).equals(BLACK_ROOK)
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,6)) == null
                     && ChessGame.this.gameBoard.getPiece(new ChessPosition(8,7)) == null) {
                 boolean canCastle = true;
@@ -461,7 +465,7 @@ public class ChessGame {
                 if(isInCheck(TeamColor.BLACK)) {
                     canCastle = false;
                 }
-                ChessGame.this.gameBoard.movePiece(new ChessMove(blackKingStart, new ChessPosition(8,6), null));
+                ChessGame.this.gameBoard.movePiece(new ChessMove(BLACK_KING_START, new ChessPosition(8,6), null));
                 if(isInCheck(TeamColor.BLACK)) {
                     canCastle = false;
                 }
@@ -471,7 +475,7 @@ public class ChessGame {
                 }
 
                 if(canCastle) {
-                    moves.add(blackRightCastle);
+                    moves.add(BLACK_RIGHT_CASTLE);
                 }
                 ChessGame.this.gameBoard = trueBoard;
             }
@@ -485,17 +489,17 @@ public class ChessGame {
          * @param move the move that might have been a castle
          */
         public void executeCastle(ChessMove move) {
-            if(move.equals(whiteLeftCastle)) {
-                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteLeftRookStart, new ChessPosition(1,4), null));
+            if(move.equals(WHITE_LEFT_CASTLE)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(WHITE_LEFT_ROOK_START, new ChessPosition(1,4), null));
             }
-            if(move.equals(whiteRightCastle)) {
-                ChessGame.this.gameBoard.movePiece(new ChessMove(whiteRightRookStart, new ChessPosition(1,6), null));
+            if(move.equals(WHITE_RIGHT_CASTLE)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(WHITE_RIGHT_ROOK_START, new ChessPosition(1,6), null));
             }
-            if(move.equals(blackLeftCastle)) {
-                ChessGame.this.gameBoard.movePiece(new ChessMove(blackLeftRookStart, new ChessPosition(8,4), null));
+            if(move.equals(BLACK_LEFT_CASTLE)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(BLACK_LEFT_ROOK_START, new ChessPosition(8,4), null));
             }
-            if(move.equals(blackRightCastle)) {
-                ChessGame.this.gameBoard.movePiece(new ChessMove(blackRightRookStart, new ChessPosition(8,6), null));
+            if(move.equals(BLACK_RIGHT_CASTLE)) {
+                ChessGame.this.gameBoard.movePiece(new ChessMove(BLACK_RIGHT_ROOK_START, new ChessPosition(8,6), null));
             }
         }
     }

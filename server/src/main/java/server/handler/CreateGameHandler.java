@@ -11,6 +11,16 @@ public class CreateGameHandler {
         CreateGameService createGameService = new CreateGameService();
         String authToken;
 
+        try {
+            authToken = req.headers("authorization");
+            if(authToken == null) {
+                throw new Exception();
+            }
+        }
+        catch(Error | Exception ex) {
+            return Handler.handleHeaderFail(res);
+        }
+
         CreateGameRequest createGameRequest;
         try {
             createGameRequest = Handler.fromJson(req.body(), CreateGameRequest.class);
@@ -20,16 +30,6 @@ public class CreateGameHandler {
         }
         catch (Error | Exception ex) {
             return Handler.handleJsonFail(res);
-        }
-
-        try {
-            authToken = req.headers("authorization");
-            if(authToken == null) {
-                throw new Exception();
-            }
-        }
-        catch(Error | Exception ex) {
-            return Handler.handleHeaderFail(res);
         }
 
         CreateGameResult createGameResult;

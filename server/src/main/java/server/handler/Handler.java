@@ -9,8 +9,8 @@ public class Handler {
 
     static public Gson gson = new Gson();
 
-    static public <T> T fromJson(String json, Class<T> ClassOfT) {
-        return gson.fromJson(json, ClassOfT);
+    static public <T> T fromJson(String json, Class<T> classOfT) {
+        return gson.fromJson(json, classOfT);
     }
 
     static public String toJson(Object src) {
