@@ -7,9 +7,16 @@ import model.AuthData;
 import java.util.UUID;
 
 public class Service {
+    static public int lastGameID = 0;
+
     AuthDAO authDAO = new MemoryAuthDAO();
     GameDAO gameDAO = new MemoryGameDAO();
     UserDAO userDAO = new MemoryUserDAO();
+
+    protected int generateGameID() {
+        lastGameID += 1;
+        return lastGameID;
+    }
 
     public String generateAuthToken() {
         return UUID.randomUUID().toString();
