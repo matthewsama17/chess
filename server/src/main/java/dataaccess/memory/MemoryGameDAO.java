@@ -13,12 +13,15 @@ public class MemoryGameDAO implements GameDAO {
     static List<GameData> dataset = new ArrayList<>();
 
     @Override
-    public void createGame(GameData gameData) {
-        dataset.add(gameData);
+    public int createGame(GameData gameData) {
+        int gameID = generateGameID();
+        GameData newGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+
+        dataset.add(newGameData);
+        return gameID;
     }
 
-    @Override
-    public int generateGameID() {
+    private int generateGameID() {
         lastGameID += 1;
         return lastGameID;
     }
