@@ -1,6 +1,7 @@
 import chess.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryUserDAO;
@@ -23,7 +24,10 @@ public class Main {
         System.out.println("username is " + jsonData.username() + ", passwordHash is " + jsonData.passwordHash());
 
         UserDAO userDAO = new MemoryUserDAO();
-        userDAO.createUser(jsonData);
+        try {
+            userDAO.createUser(jsonData);
+        } catch (DataAccessException ex ) { }
+
         System.out.println(userDAO.getUser("Matthew").passwordHash());
         System.out.println(userDAO.getUser("Something Else"));
         userDAO.clear();

@@ -24,13 +24,13 @@ public class UserDAOTests {
 
     @Test
     public void testCreateUserFail() {
-        String username = "user";
-        String hashword = "aas;dfjasldjfpeqj";
-        String email = "dingus@stupid.stupid";
+        String username = "username";
+        String hashword = "3oigwpogjlasnglkj";
+        String email = "username@stupid.stupid";
         UserData userData = new UserData(username, hashword, email);
 
         Assertions.assertDoesNotThrow(() -> userDAO.createUser(userData));
-        Assertions.assertDoesNotThrow(() -> userDAO.createUser(userData));
+        Assertions.assertThrows(DataAccessException.class, () -> userDAO.createUser(userData));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class UserDAOTests {
         String hashword = "aas;dfjasldjfpeqj";
         String email = "dingus@stupid.stupid";
         UserData userData = new UserData(username, hashword, email);
-        userDAO.createUser(userData);
+        Assertions.assertDoesNotThrow(() -> userDAO.createUser(userData));
 
         UserData outputUserData = userDAO.getUser(username);
 
@@ -59,7 +59,7 @@ public class UserDAOTests {
         String hashword = "aas;dfjasldjfpeqj";
         String email = "dingus@stupid.stupid";
         UserData userData = new UserData(username, hashword, email);
-        userDAO.createUser(userData);
+        Assertions.assertDoesNotThrow(() -> userDAO.createUser(userData));
 
         userDAO.clear();
 
