@@ -2,6 +2,7 @@ package service;
 
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import request.RegisterRequest;
 import result.LoginResult;
 
@@ -12,7 +13,9 @@ public class RegisterService extends Service {
             throw new ServiceException("Error: already taken", 403);
         }
 
-        UserData userData = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+        String hashedPassword = BCrypt.hashpw(registerRequest.password(), BCrypt.gensalt());
+
+        UserData userData = new UserData(registerRequest.username(), hashedPassword, registerRequest.email());
         userDAO.createUser(userData);
 
         String authToken = generateAuthToken();

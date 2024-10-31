@@ -6,6 +6,7 @@ import dataaccess.memory.MemoryAuthDAO;
 import dataaccess.memory.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.Server;
 
 public class Main {
@@ -14,15 +15,16 @@ public class Main {
         System.out.println("♕ 240 Chess Server: " + piece);
 
         Gson gson = new Gson();
-        UserData userData = new UserData("Matthew", "goodPassWord", "mgh57@byu.edu");
+        String hashedPassword = BCrypt.hashpw("goodPassWord", BCrypt.gensalt());
+        UserData userData = new UserData("Matthew", hashedPassword, "mgh57@byu.edu");
         String jsonString = gson.toJson(userData);
         System.out.println(jsonString);
         UserData jsonData = gson.fromJson(jsonString, UserData.class);
-        System.out.println("username is " + jsonData.username() + ", password is " + jsonData.password());
+        System.out.println("username is " + jsonData.username() + ", passwordHash is " + jsonData.passwordHash());
 
         UserDAO userDAO = new MemoryUserDAO();
         userDAO.createUser(jsonData);
-        System.out.println(userDAO.getUser("Matthew").password());
+        System.out.println(userDAO.getUser("Matthew").passwordHash());
         System.out.println(userDAO.getUser("Something Else"));
         userDAO.clear();
         System.out.println(userDAO.getUser("Matthew"));
