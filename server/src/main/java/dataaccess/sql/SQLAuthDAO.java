@@ -7,6 +7,7 @@ import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLAuthDAO implements AuthDAO {
@@ -65,7 +66,7 @@ public class SQLAuthDAO implements AuthDAO {
             try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
                 ps.setString(1, authToken);
 
-                try(var rs = ps.executeQuery()) {
+                try(ResultSet rs = ps.executeQuery()) {
                     if(rs.next()) {
                         String username = rs.getString(1);
                         authData = new AuthData(authToken, username);
