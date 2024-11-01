@@ -10,6 +10,8 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import server.Server;
 
+import java.util.UUID;
+
 public class Main {
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -22,6 +24,13 @@ public class Main {
         System.out.println(jsonString);
         UserData jsonData = gson.fromJson(jsonString, UserData.class);
         System.out.println("username is " + jsonData.username() + ", passwordHash is " + jsonData.passwordHash());
+
+        String authToken = UUID.randomUUID().toString();
+
+        System.out.println("authToken is      " + authToken);
+        System.out.println("It has length " + authToken.length());
+        System.out.println("hashedPassword is " + hashedPassword);
+        System.out.println("It has length " + hashedPassword.length());
 
         UserDAO userDAO = new MemoryUserDAO();
         try {
