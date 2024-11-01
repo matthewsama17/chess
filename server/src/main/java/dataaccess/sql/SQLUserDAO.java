@@ -87,9 +87,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clear() {
-        String SQLCommand = """
-                DELETE FROM user
-                """;
+        String SQLCommand = " DELETE FROM user";
         try(Connection conn = DatabaseManager.getConnection()) {
             try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
                 ps.executeUpdate();
