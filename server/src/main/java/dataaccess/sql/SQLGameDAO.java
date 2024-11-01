@@ -9,6 +9,7 @@ import model.GameData;
 import com.google.gson.Gson;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SQLGameDAO implements GameDAO {
 
@@ -107,12 +108,61 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData[] listGames() {
-        return new GameData[0];
+        ArrayList<GameData> games = new ArrayList<>();
+
+        String SQLCommand = "SELECT * FROM game";
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+                try(ResultSet rs = ps.executeQuery()) {
+                    while(rs.next()) {
+                        int gameID = rs.getInt("gameID");
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+                        String gameJson = rs.getString("gameJson");
+
+                        ChessGame game = gson.fromJson(gameJson, ChessGame.class);
+
+                        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                        games.add(gameData);
+                    }
+                }
+            }
+        }
+        catch(DataAccessException | SQLException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+
+        GameData[] gameList = new GameData[games.size()];
+        return games.toArray(gameList);
     }
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
+        if(getGame(gameData.gameID()) == null) {
+            throw new DataAccessException("The game to be updated does not exist.");
+        }
 
+        String SQLCommand = """
+                UPDATE game
+                SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ?
+                WHERE gameID = ?
+                """;
+        try(Connection conn = DatabaseManager.getConnection()) {
+            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+                ps.setString(1, gameData.whiteUsername());
+                ps.setString(2, gameData.blackUsername());
+                ps.setString(3, gameData.gameName());
+                String gameJson = gson.toJson(gameData.game());
+                ps.setString(4, gameJson);
+                ps.setInt(5, gameData.gameID());
+
+                ps.executeUpdate();
+            }
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
+        }
     }
 
     @Override
