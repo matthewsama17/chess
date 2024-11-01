@@ -2,15 +2,16 @@ package service;
 
 import dataaccess.*;
 import dataaccess.memory.*;
+import dataaccess.sql.*;
 import model.AuthData;
 
 import java.util.UUID;
 
 public class Service {
 
-    AuthDAO authDAO = new MemoryAuthDAO();
-    GameDAO gameDAO = new MemoryGameDAO();
-    UserDAO userDAO = new MemoryUserDAO();
+    AuthDAO authDAO = new SQLAuthDAO();
+    GameDAO gameDAO = new SQLGameDAO();
+    UserDAO userDAO = new SQLUserDAO();
 
     public String generateAuthToken() {
         return UUID.randomUUID().toString();
