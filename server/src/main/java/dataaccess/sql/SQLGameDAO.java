@@ -1,10 +1,20 @@
 package dataaccess.sql;
 
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import dataaccess.GameDAO;
 import model.GameData;
 
 public class SQLGameDAO implements GameDAO {
+
+    static {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
     @Override
     public int createGame(GameData gameData) {
         return 0;
