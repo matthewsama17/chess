@@ -35,7 +35,9 @@ public class Main {
 
         AuthDAO authDAO = new MemoryAuthDAO();
         AuthData authData = new AuthData("234", "Matthew");
-        authDAO.createAuth(authData);
+        try {
+            authDAO.createAuth(authData);
+        } catch (DataAccessException ex) { }
         System.out.println(authDAO.getAuth("234").username());
         System.out.println(authDAO.getAuth("Something else"));
         authDAO.deleteAuth(authData);

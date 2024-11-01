@@ -27,8 +27,8 @@ public class AuthDAOTests {
         String authToken = "anAuthToken";
         AuthData authData = new AuthData(authToken, username);
 
-        authDAO.createAuth(authData);
         Assertions.assertDoesNotThrow(() -> authDAO.createAuth(authData));
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.createAuth(authData));
     }
 
     @Test
@@ -36,7 +36,7 @@ public class AuthDAOTests {
         String username = "username";
         String authToken = "GoodAuthToken";
         AuthData authData = new AuthData(authToken, username);
-        authDAO.createAuth(authData);
+        Assertions.assertDoesNotThrow(() -> authDAO.createAuth(authData));
 
         AuthData outputAuthData = authDAO.getAuth(authToken);
 
@@ -56,7 +56,7 @@ public class AuthDAOTests {
         String username = "Matthew";
         String authToken = "MediocreAuthToken";
         AuthData authData = new AuthData(authToken, username);
-        authDAO.createAuth(authData);
+        Assertions.assertDoesNotThrow(() -> authDAO.createAuth(authData));
 
         authDAO.clear();
 
@@ -70,7 +70,7 @@ public class AuthDAOTests {
         String username = "Matthew";
         String authToken = "MediocreAuthToken";
         AuthData authData = new AuthData(authToken, username);
-        authDAO.createAuth(authData);
+        Assertions.assertDoesNotThrow(() -> authDAO.createAuth(authData));
 
         authDAO.deleteAuth(authData);
 
@@ -84,12 +84,12 @@ public class AuthDAOTests {
         String username = "Matthew";
         String authToken = "MediocreAuthToken";
         AuthData authData = new AuthData(authToken, username);
-        authDAO.createAuth(authData);
+        Assertions.assertDoesNotThrow(() -> authDAO.createAuth(authData));
 
         String othername = "Matt";
         String otherToken = "MediumAuthToken";
         AuthData otherData = new AuthData(otherToken, othername);
-        authDAO.createAuth(otherData);
+        Assertions.assertDoesNotThrow(() -> authDAO.createAuth(otherData));
 
         authDAO.deleteAuth(otherData);
 

@@ -24,7 +24,11 @@ public class RegisterService extends Service {
 
         String authToken = generateAuthToken();
         AuthData authData = new AuthData(authToken, registerRequest.username());
-        authDAO.createAuth(authData);
+        try {
+            authDAO.createAuth(authData);
+        } catch (DataAccessException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
 
         return new LoginResult(registerRequest.username(), authToken);
     }

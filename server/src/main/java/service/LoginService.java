@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
@@ -17,7 +18,11 @@ public class LoginService extends Service {
 
         String authToken = generateAuthToken();
         AuthData authData = new AuthData(authToken, loginRequest.username());
-        authDAO.createAuth(authData);
+        try {
+            authDAO.createAuth(authData);
+        } catch (DataAccessException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
 
         return new LoginResult(loginRequest.username(), authToken);
     }

@@ -37,7 +37,7 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void createAuth(AuthData authData) {
+    public void createAuth(AuthData authData) throws DataAccessException {
         String SQLCommand = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try(Connection conn = DatabaseManager.getConnection()) {
             try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
@@ -47,8 +47,8 @@ public class SQLAuthDAO implements AuthDAO {
                 ps.executeUpdate();
             }
         }
-        catch(DataAccessException | SQLException ex) {
-            throw new RuntimeException(ex.getMessage());
+        catch(SQLException ex) {
+            throw new DataAccessException(ex.getMessage());
         }
     }
 
