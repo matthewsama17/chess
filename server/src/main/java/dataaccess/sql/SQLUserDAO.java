@@ -21,7 +21,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     static {
-        String SQLCommand = """
+        String command = """
                 CREATE TABLE IF NOT EXISTS user (
                 username VARCHAR(20) NOT NULL PRIMARY KEY,
                 passwordHash CHAR(60) NOT NULL,
@@ -29,7 +29,7 @@ public class SQLUserDAO implements UserDAO {
                 )
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
         }
@@ -40,9 +40,9 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        String SQLCommand = "INSERT INTO user (username, passwordHash, email) VALUES (?, ?, ?)";
+        String command = "INSERT INTO user (username, passwordHash, email) VALUES (?, ?, ?)";
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, userData.username());
                 ps.setString(2, userData.passwordHash());
                 ps.setString(3, userData.email());
@@ -58,7 +58,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        String SQLCommand = """
+        String command = """
                 SELECT passwordHash, email
                 FROM user
                 WHERE username = ?
@@ -66,7 +66,7 @@ public class SQLUserDAO implements UserDAO {
         UserData userData = null;
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, username);
 
                 try(ResultSet rs = ps.executeQuery()) {
@@ -87,9 +87,9 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clear() {
-        String SQLCommand = " DELETE FROM user";
+        String command = " DELETE FROM user";
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
         }

@@ -24,7 +24,7 @@ public class SQLGameDAO implements GameDAO {
     }
 
     static {
-        String SQLCommand = """
+        String command = """
                 CREATE TABLE IF NOT EXISTS game (
                 gameID INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 whiteUsername VARCHAR(20),
@@ -34,7 +34,7 @@ public class SQLGameDAO implements GameDAO {
                 )
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
         }
@@ -45,13 +45,13 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(GameData gameData) {
-        String SQLCommand = """
+        String command = """
                 INSERT INTO game (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)
                 """;
         int gameID = 0;
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand, Statement.RETURN_GENERATED_KEYS)) {
+            try(PreparedStatement ps = conn.prepareStatement(command, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, gameData.whiteUsername());
                 ps.setString(2, gameData.blackUsername());
                 ps.setString(3, gameData.gameName());
@@ -74,7 +74,7 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) {
-        String SQLCommand = """
+        String command = """
                 SELECT whiteUsername, blackUsername, gameName, gameJson
                 FROM game
                 WHERE gameID = ?
@@ -82,7 +82,7 @@ public class SQLGameDAO implements GameDAO {
         GameData gameData = null;
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setInt(1, gameID);
 
                 try(ResultSet rs = ps.executeQuery()) {
@@ -110,9 +110,9 @@ public class SQLGameDAO implements GameDAO {
     public GameData[] listGames() {
         ArrayList<GameData> games = new ArrayList<>();
 
-        String SQLCommand = "SELECT * FROM game";
+        String command = "SELECT * FROM game";
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 try(ResultSet rs = ps.executeQuery()) {
                     while(rs.next()) {
                         int gameID = rs.getInt("gameID");
@@ -143,13 +143,13 @@ public class SQLGameDAO implements GameDAO {
             throw new DataAccessException("The game to be updated does not exist.");
         }
 
-        String SQLCommand = """
+        String command = """
                 UPDATE game
                 SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ?
                 WHERE gameID = ?
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, gameData.whiteUsername());
                 ps.setString(2, gameData.blackUsername());
                 ps.setString(3, gameData.gameName());
@@ -167,14 +167,14 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void clear() {
-        String SQLCommand = "DELETE FROM game";
-        String SQLCommand2 = "ALTER TABLE game AUTO_INCREMENT = 1";
+        String command = "DELETE FROM game";
+        String command2 = "ALTER TABLE game AUTO_INCREMENT = 1";
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand2)) {
+            try(PreparedStatement ps = conn.prepareStatement(command2)) {
                 ps.executeUpdate();
             }
         }

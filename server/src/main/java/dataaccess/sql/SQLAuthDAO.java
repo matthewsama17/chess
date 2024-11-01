@@ -21,14 +21,14 @@ public class SQLAuthDAO implements AuthDAO {
     }
 
     static {
-        String SQLCommand = """
+        String command = """
                 CREATE TABLE IF NOT EXISTS auth (
                 authToken CHAR(36) NOT NULL PRIMARY KEY,
                 username VARCHAR(20) NOT NULL
                 )
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
         }
@@ -39,9 +39,9 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
-        String SQLCommand = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        String command = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, authData.authToken());
                 ps.setString(2, authData.username());
 
@@ -55,7 +55,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) {
-        String SQLCommand = """
+        String command = """
                 SELECT username
                 FROM auth
                 WHERE authToken = ?
@@ -63,7 +63,7 @@ public class SQLAuthDAO implements AuthDAO {
         AuthData authData = null;
 
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, authToken);
 
                 try(ResultSet rs = ps.executeQuery()) {
@@ -84,12 +84,12 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(AuthData authData) {
-        String SQLCommand = """
+        String command = """
                 DELETE FROM auth
                 WHERE authToken = ?
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.setString(1, authData.authToken());
 
                 ps.executeUpdate();
@@ -103,9 +103,9 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void clear() {
-        String SQLCommand = "DELETE FROM auth";
+        String command = "DELETE FROM auth";
         try(Connection conn = DatabaseManager.getConnection()) {
-            try(PreparedStatement ps = conn.prepareStatement(SQLCommand)) {
+            try(PreparedStatement ps = conn.prepareStatement(command)) {
                 ps.executeUpdate();
             }
         }
