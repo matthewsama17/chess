@@ -22,7 +22,7 @@ public class SQLAuthDAO implements AuthDAO {
     static {
         String SQLCommand = """
                 CREATE TABLE IF NOT EXISTS auth (
-                authToken CHAR(60) NOT NULL PRIMARY KEY,
+                authToken CHAR(36) NOT NULL PRIMARY KEY,
                 username VARCHAR(20) NOT NULL
                 )
                 """;
