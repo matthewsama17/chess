@@ -31,7 +31,7 @@ public class BoardDrawer {
     }
 
     private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
-        drawBorder(out, color);
+        drawBorder(out, color, true);
         for(int i = 1; i <= 8; i++) {
             int row = i;
             if(color != ChessGame.TeamColor.BLACK) {
@@ -42,15 +42,20 @@ public class BoardDrawer {
             drawSideBorder(out, row);
             finishLine(out);
         }
-        drawBorder(out, color);
+        drawBorder(out, color, false);
 
     }
 
-    private static void drawBorder(PrintStream out, ChessGame.TeamColor color) {
+    private static void drawBorder(PrintStream out, ChessGame.TeamColor color, boolean top) {
+        ChessGame.TeamColor cornerColor = color;
+        if(top) {
+            cornerColor = (color == ChessGame.TeamColor.BLACK) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        }
+        drawCorner(out, cornerColor);
+
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
 
-        out.print(EMPTY);
         for(int i = 0; i < 8; i++) {
             String letter = letters[i];
             if(color == ChessGame.TeamColor.BLACK) {
@@ -58,9 +63,19 @@ public class BoardDrawer {
             }
             out.print(letter);
         }
-        out.print(EMPTY);
 
+        drawCorner(out, cornerColor);
         finishLine(out);
+    }
+
+    private static void drawCorner(PrintStream out, ChessGame.TeamColor color) {
+        if(color == ChessGame.TeamColor.BLACK) {
+            out.print(SET_BG_COLOR_MAGENTA);
+        }
+        else {
+            out.print(SET_BG_COLOR_GREEN);
+        }
+        out.print(EMPTY);
     }
 
     private static void drawSideBorder(PrintStream out, int row) {
