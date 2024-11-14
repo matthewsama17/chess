@@ -25,16 +25,16 @@ public class Menu {
     public void run() {
         System.out.print(SET_TEXT_COLOR_YELLOW);
         System.out.println("Welcome to chess!");
-        System.out.println("Please log in to begin.");
+        Prelogin.printHelp();
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
 
+        System.out.print(SET_TEXT_COLOR_YELLOW);
+
         while(!result.equals("quit")) {
             printPrompt();
             result = scanner.nextLine();
-
-            System.out.print(SET_TEXT_COLOR_YELLOW);
 
             if(stage == MenuStage.prelogin) {
                 stage = Prelogin.eval(result);
@@ -51,5 +51,11 @@ public class Menu {
         System.out.print(RESET_TEXT_COLOR);
         System.out.print(">>> ");
         System.out.print(SET_TEXT_COLOR_GREEN);
+    }
+
+    public static void printCommand(String command) {
+        System.out.print(SET_TEXT_COLOR_GREEN);
+        System.out.print(command);
+        System.out.print(SET_TEXT_COLOR_YELLOW);
     }
 }
