@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class Menu {
     ServerFacade facade;
+    MenuStage stage = MenuStage.prelogin;
 
     public Menu(String url) {
         facade = new ServerFacade(url);
@@ -14,6 +15,11 @@ public class Menu {
 
     public Menu(int port) {
         facade = new ServerFacade(port);
+    }
+
+    public enum MenuStage {
+        prelogin,
+        postlogin
     }
 
     public void run() {
@@ -29,7 +35,13 @@ public class Menu {
             result = scanner.nextLine();
 
             System.out.print(SET_TEXT_COLOR_YELLOW);
-            System.out.println(result);
+
+            if(stage == MenuStage.prelogin) {
+                stage = Prelogin.eval(result);
+            }
+            else if(stage == MenuStage.postlogin) {
+                stage = Postlogin.eval(result);
+            }
         }
         System.out.println();
     }
