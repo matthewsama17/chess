@@ -1,5 +1,6 @@
 package menu;
 
+import result.ServiceException;
 import serverfacade.ServerFacade;
 
 public class Postlogin {
@@ -29,11 +30,12 @@ public class Postlogin {
             return handleObserve(tokens);
         }
         else if(tokens[0].equals("logout")) {
-            handleLogout();
+            handleLogout(authToken);
             return Menu.MenuStage.prelogin;
         }
         else if(tokens[0].equals("quit")) {
             System.out.println("Quitting...");
+            handleLogout(authToken);
             return Menu.MenuStage.postlogin;
         }
         else {
@@ -79,7 +81,10 @@ public class Postlogin {
         return Menu.MenuStage.postlogin;
     }
 
-    private void handleLogout() {
-        System.out.println("logout");
+    private void handleLogout(String authToken) {
+        try {
+            facade.logout(authToken);
+        }
+        catch(ServiceException ignored) { }
     }
 }

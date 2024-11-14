@@ -53,6 +53,9 @@ public class Menu {
     private void printPrompt() {
         System.out.print("\n");
         System.out.print(RESET_TEXT_COLOR);
+        if(stage == MenuStage.postlogin) {
+            System.out.print(prelogin.getUsername());
+        }
         System.out.print(">>> ");
         System.out.print(SET_TEXT_COLOR_GREEN);
     }
@@ -61,5 +64,15 @@ public class Menu {
         System.out.print(SET_TEXT_COLOR_GREEN);
         System.out.print(command);
         System.out.print(SET_TEXT_COLOR_YELLOW);
+    }
+
+    public static void printError(String error) {
+        System.out.print(SET_TEXT_COLOR_RED);
+        System.out.println(error);
+        System.out.print(SET_TEXT_COLOR_YELLOW);
+    }
+
+    public static void printError() {
+        printError("An unknown error occurred.");
     }
 }
