@@ -30,6 +30,16 @@ public class BoardDrawer {
         drawBoard(out, board, color);
     }
 
+    public static void draw(ChessGame.TeamColor color) {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        draw(board, color);
+    }
+
+    public static void draw() {
+        draw(ChessGame.TeamColor.WHITE);
+    }
+
     private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
         drawBorder(out, color, true);
         for(int i = 1; i <= 8; i++) {

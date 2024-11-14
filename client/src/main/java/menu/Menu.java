@@ -51,6 +51,7 @@ public class Menu {
     }
 
     private void printPrompt() {
+        System.out.print(RESET_BG_COLOR);
         System.out.print("\n");
         System.out.print(SET_TEXT_COLOR_BLUE);
         if(stage == MenuStage.postlogin) {

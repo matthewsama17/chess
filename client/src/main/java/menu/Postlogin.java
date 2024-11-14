@@ -1,5 +1,7 @@
 package menu;
 
+import chess.ChessGame;
+import ui.BoardDrawer;
 import result.ServiceException;
 import serverfacade.ServerFacade;
 
@@ -77,7 +79,13 @@ public class Postlogin {
     }
 
     private Menu.MenuStage handleObserve(String[] tokens) {
-        System.out.println("Observe");
+        if(false /*Change this when there is an actual need for it*/) {
+            System.out.println("Wrong number of arguments. Request could not be processed.");
+        }
+
+        BoardDrawer.draw();
+        System.out.println();
+        BoardDrawer.draw(ChessGame.TeamColor.BLACK);
         return Menu.MenuStage.postlogin;
     }
 
