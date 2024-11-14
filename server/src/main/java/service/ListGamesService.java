@@ -1,6 +1,7 @@
 package service;
 
 import result.ListGamesResult;
+import result.ServiceException;
 
 public class ListGamesService extends Service {
 

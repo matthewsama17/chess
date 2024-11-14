@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import request.JoinGameRequest;
+import result.ServiceException;
 
 public class JoinGameService extends Service {
 

@@ -2,7 +2,7 @@ package server.handler;
 
 import result.ListGamesResult;
 import service.ListGamesService;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 
 public class ListGamesHandler extends Handler {

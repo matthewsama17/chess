@@ -1,4 +1,4 @@
-package service;
+package result;
 
 public class ServiceException extends Exception {
     int statusCode;

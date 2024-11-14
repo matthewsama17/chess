@@ -1,9 +1,9 @@
 package service;
 
-import chess.ChessGame;
 import model.GameData;
 import request.CreateGameRequest;
 import result.CreateGameResult;
+import result.ServiceException;
 
 public class CreateGameService extends Service {
 

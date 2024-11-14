@@ -1,6 +1,7 @@
 package service;
 
 import model.AuthData;
+import result.ServiceException;
 
 public class LogoutService extends Service {
 

@@ -10,7 +10,7 @@ import result.CreateGameResult;
 import result.LoginResult;
 import server.Server;
 import serverfacade.ServerFacade;
-import service.ServiceException;
+import result.ServiceException;
 
 
 public class ServerFacadeTests {

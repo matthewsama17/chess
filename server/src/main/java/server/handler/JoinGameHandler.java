@@ -2,7 +2,7 @@ package server.handler;
 
 import request.JoinGameRequest;
 import service.JoinGameService;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 
 public class JoinGameHandler extends Handler {

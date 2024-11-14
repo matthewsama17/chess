@@ -1,7 +1,6 @@
 package server.handler;
 
 import service.ClearService;
-import service.ServiceException;
 import spark.*;
 
 public class ClearHandler {

@@ -3,7 +3,7 @@ package server.handler;
 import request.RegisterRequest;
 import result.LoginResult;
 import service.RegisterService;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 
 public class RegisterHandler extends Handler {

@@ -5,7 +5,6 @@ import request.JoinGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
 import result.*;
-import service.ServiceException;
 
 public class ServerFacade {
 

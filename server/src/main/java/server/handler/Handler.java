@@ -1,7 +1,7 @@
 package server.handler;
 
 import result.ErrorMessageWrapper;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 import com.google.gson.Gson;
 

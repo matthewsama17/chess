@@ -6,6 +6,7 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.ServiceException;
 
 public class RegisterService extends Service {
 

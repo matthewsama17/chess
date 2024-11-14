@@ -1,7 +1,7 @@
 package server.handler;
 
 import service.LogoutService;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 
 public class LogoutHandler extends Handler {

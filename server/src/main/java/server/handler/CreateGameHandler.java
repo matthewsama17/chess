@@ -3,7 +3,7 @@ package server.handler;
 import request.CreateGameRequest;
 import result.CreateGameResult;
 import service.CreateGameService;
-import service.ServiceException;
+import result.ServiceException;
 import spark.*;
 
 public class CreateGameHandler {

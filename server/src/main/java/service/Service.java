@@ -1,9 +1,9 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.memory.*;
 import dataaccess.sql.*;
 import model.AuthData;
+import result.ServiceException;
 
 import java.util.UUID;
 
