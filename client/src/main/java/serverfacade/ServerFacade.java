@@ -30,7 +30,7 @@ public class ServerFacade {
     public void clear() {
         String path = "/db";
         try {
-            makeRequest("DELETE", path, null, null);
+            makeRequest("DELETE", path, null, null, null);
         }
         catch(Exception ex) {
             throw new RuntimeException(ex.getMessage());
@@ -39,37 +39,42 @@ public class ServerFacade {
 
     public LoginResult register(RegisterRequest registerRequest) throws ServiceException {
         String path = "/user";
-        return makeRequest("POST", path, registerRequest, LoginResult.class);
+        return makeRequest("POST", path, registerRequest, null, LoginResult.class);
     }
 
     public LoginResult login(LoginRequest loginRequest) throws ServiceException {
         String path = "/session";
-        return makeRequest("POST", path, loginRequest, LoginResult.class);
+        return makeRequest("POST", path, loginRequest, null, LoginResult.class);
     }
 
     public void logout(String authToken) throws ServiceException {
-
+        String path = "/session";
+        makeRequest("DELETE", path, null, authToken, null);
     }
 
     public ListGamesResult listGames(String authToken) throws ServiceException {
-        return null;
+        String path = "/game";
+        return makeRequest("GET", path, null, authToken, ListGamesResult.class);
     }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws ServiceException {
-        return null;
+        String path = "/game";
+        return makeRequest("POST", path, createGameRequest, authToken, CreateGameResult.class);
     }
 
     public void joinGame(String authToken, JoinGameRequest joinGameRequest) throws ServiceException {
-
+        String path = "/game";
+        makeRequest("PUT", path, joinGameRequest, authToken, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ServiceException {
+    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws ServiceException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
+            writeHeader(authToken, http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -86,6 +91,12 @@ public class ServerFacade {
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
+        }
+    }
+
+    private static void writeHeader(String authToken, HttpURLConnection http) throws IOException {
+        if(authToken != null) {
+            http.addRequestProperty("authorization", authToken);
         }
     }
 
