@@ -2,15 +2,10 @@ package client;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
-import request.CreateGameRequest;
-import request.JoinGameRequest;
-import request.LoginRequest;
-import request.RegisterRequest;
-import result.CreateGameResult;
-import result.LoginResult;
+import request.*;
+import result.*;
 import server.Server;
 import serverfacade.ServerFacade;
-import result.ServiceException;
 
 
 public class ServerFacadeTests {

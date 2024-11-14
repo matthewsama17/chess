@@ -1,19 +1,11 @@
 package serverfacade;
 
 import com.google.gson.Gson;
-import request.CreateGameRequest;
-import request.JoinGameRequest;
-import request.LoginRequest;
-import request.RegisterRequest;
+import request.*;
 import result.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 public class ServerFacade {
 
