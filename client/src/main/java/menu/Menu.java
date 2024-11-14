@@ -7,12 +7,14 @@ import java.util.Scanner;
 
 public class Menu {
     ServerFacade facade;
-    Prelogin prelogin = new Prelogin();
-    Postlogin postlogin = new Postlogin();
+    Prelogin prelogin;
+    Postlogin postlogin;
     MenuStage stage = MenuStage.prelogin;
 
     public Menu(String url) {
         facade = new ServerFacade(url);
+        prelogin = new Prelogin(facade);
+        postlogin = new Postlogin(facade);
     }
 
     public Menu(int port) {
@@ -42,7 +44,7 @@ public class Menu {
                 stage = prelogin.eval(result);
             }
             else if(stage == MenuStage.postlogin) {
-                stage = postlogin.eval(result);
+                stage = postlogin.eval(result, prelogin.getAuthToken());
             }
         }
         System.out.println();

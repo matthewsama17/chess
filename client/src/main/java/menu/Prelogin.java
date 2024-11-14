@@ -1,6 +1,19 @@
 package menu;
 
+import serverfacade.ServerFacade;
+
 public class Prelogin {
+    ServerFacade facade;
+    private String authToken = null;
+
+    public Prelogin(ServerFacade facade) {
+        this.facade = facade;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
     public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 

@@ -1,7 +1,15 @@
 package menu;
 
+import serverfacade.ServerFacade;
+
 public class Postlogin {
-    public Menu.MenuStage eval(String input) {
+    ServerFacade facade;
+
+    public Postlogin(ServerFacade facade) {
+        this.facade = facade;
+    }
+
+    public Menu.MenuStage eval(String input, String authToken) {
         String[] tokens = input.toLowerCase().split(" ");
 
         if(tokens.length == 0) {
