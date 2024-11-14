@@ -38,10 +38,6 @@ public class Prelogin {
             System.out.println("Quitting...");
             return Menu.MenuStage.prelogin;
         }
-        //else if(tokens[0].equals("secretclearfortesting")) {
-        //    facade.clear();
-        //    return Menu.MenuStage.prelogin;
-        //}
         else {
             printHelp();
             return Menu.MenuStage.prelogin;

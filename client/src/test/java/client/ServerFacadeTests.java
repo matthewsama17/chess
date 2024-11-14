@@ -27,12 +27,12 @@ public class ServerFacadeTests {
     }
 
     @AfterEach
-    public void clearForTests() {
+    public void clearForFacadeTests() {
         facade.clear();
     }
 
     @Test
-    public void testRegister() throws ServiceException {
+    public void testFacadeRegister() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
         LoginResult loginResult = facade.register(registerRequest);
 
@@ -40,7 +40,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testRegisterFail() throws ServiceException {
+    public void testFacadeRegisterFail() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew2", "anotherGoodPassword", "m.3herron@gmail.com");
         facade.register(registerRequest);
 
@@ -48,7 +48,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testClear() throws ServiceException {
+    public void testFacadeClear() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew3", "aGoodPassword", "mherron239@gmail.com");
         facade.register(registerRequest);
 
@@ -58,7 +58,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLogin() throws ServiceException {
+    public void testFacadeLogin() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
         facade.register(registerRequest);
 
@@ -69,13 +69,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLoginFail() {
+    public void testFacadeLoginFail() {
         LoginRequest loginRequest = new LoginRequest("Matthew", "aBadPassword");
         Assertions.assertThrows(ServiceException.class, () -> facade.login(loginRequest));
     }
 
     @Test
-    public void testLogout() throws ServiceException {
+    public void testFacadeLogout() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
         LoginResult loginResult = facade.register(registerRequest);
 
@@ -85,22 +85,22 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testLogoutFail() {
+    public void testFacadeLogoutFail() {
         String authToken = "aDumbAuthToken";
 
         Assertions.assertThrows(ServiceException.class, () -> facade.logout(authToken));
     }
 
     @Test
-    public void testCreateGame() throws ServiceException {
-        String authToken = initializeUser();
+    public void testFacadeCreateGame() throws ServiceException {
+        String authToken = initializeUserFacade();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
 
         Assertions.assertDoesNotThrow(() -> facade.createGame(authToken, createGameRequest));
     }
 
     @Test
-    public void testCreateGameFail() {
+    public void testFacadeCreateGameFail() {
         String authToken = "aDumbAuthToken";
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
 
@@ -108,8 +108,8 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testListGames() throws ServiceException {
-        String authToken = initializeUser();
+    public void testFacadeListGames() throws ServiceException {
+        String authToken = initializeUserFacade();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
         facade.createGame(authToken, createGameRequest);
 
@@ -117,15 +117,15 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testListGamesFail() {
+    public void testFacadeListGamesFail() {
         String authToken = "aDumbAuthToken";
 
         Assertions.assertThrows(ServiceException.class, () -> facade.listGames(authToken));
     }
 
     @Test
-    public void testJoinGame() throws ServiceException {
-        String authToken = initializeUser();
+    public void testFacadeJoinGame() throws ServiceException {
+        String authToken = initializeUserFacade();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
         CreateGameResult createGameResult = facade.createGame(authToken, createGameRequest);
 
@@ -136,8 +136,8 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void testJoinGameFail() throws ServiceException {
-        String authToken = initializeUser();
+    public void testFacadeJoinGameFail() throws ServiceException {
+        String authToken = initializeUserFacade();
         CreateGameRequest createGameRequest = new CreateGameRequest("Matthew's Game");
         CreateGameResult createGameResult = facade.createGame(authToken, createGameRequest);
 
@@ -147,7 +147,7 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ServiceException.class, () -> facade.joinGame(authToken, joinGameRequest));
     }
 
-    private String initializeUser() throws ServiceException {
+    private String initializeUserFacade() throws ServiceException {
         RegisterRequest registerRequest = new RegisterRequest("Matthew", "aGoodPassword", "mgh57@byu.edu");
         LoginResult loginResult = facade.register(registerRequest);
         return loginResult.authToken();
