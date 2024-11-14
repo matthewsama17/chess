@@ -129,8 +129,62 @@ public class Postlogin {
     }
 
     private Menu.MenuStage handleJoin(String authToken, String[] tokens) {
-        System.out.println("Join a fun game!");
-        return Menu.MenuStage.postlogin;
+        if(tokens.length != 3) {
+            Menu.printError("Wrong number of arguments. Request could not be processed.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        int gameNum;
+        try {
+            gameNum = Integer.parseInt(tokens[1]);
+        } catch (NumberFormatException ex) {
+            Menu.printError("The second argument must be an integer.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        ChessGame.TeamColor color = null;
+        if(tokens[2].equals("white")) {
+            color = ChessGame.TeamColor.WHITE;
+        }
+        else if(tokens[2].equals("black")) {
+            color = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            Menu.printError("The last argument must be either WHITE or BLACK");
+        }
+
+        if(gameNum < 1 || gameNum > games.length) {
+            Menu.printError("The second argument is not a valid Game ID.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        JoinGameRequest joinGameRequest = new JoinGameRequest(color, games[gameNum-1].gameID());
+        try {
+            facade.joinGame(authToken, joinGameRequest);
+            System.out.println("Joined Game Successfully!");
+            BoardDrawer.draw();
+            System.out.println();
+            BoardDrawer.draw(ChessGame.TeamColor.BLACK);
+            return Menu.MenuStage.postlogin;
+        }
+        catch(ServiceException ex) {
+            if(ex.getStatusCode() == 400) {
+                Menu.printError("Request could not be processed");
+            }
+            else if(ex.getStatusCode() == 401) {
+                Menu.printError("The session has timed out.");
+                return Menu.MenuStage.prelogin;
+            }
+            else if(ex.getStatusCode() == 403) {
+                Menu.printError("The requested position is already taken.");
+            }
+            else {
+                Menu.printError();
+            }
+            return Menu.MenuStage.postlogin;
+
+        }
+
     }
 
     private Menu.MenuStage handleObserve(String authToken, String[] tokens) {
