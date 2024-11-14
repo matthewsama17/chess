@@ -1,7 +1,7 @@
 package menu;
 
 public class Postlogin {
-    public static Menu.MenuStage eval(String input) {
+    public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 
         if(tokens.length == 0) {
@@ -34,7 +34,7 @@ public class Postlogin {
         }
     }
 
-    public static void printHelp() {
+    public void printHelp() {
         Menu.printCommand("help");
         System.out.println(" - Display these commands");
         Menu.printCommand("create <NAME>");
@@ -51,27 +51,27 @@ public class Postlogin {
         System.out.println(" - End this program");
     }
 
-    private static Menu.MenuStage handleCreate(String[] tokens) {
+    private Menu.MenuStage handleCreate(String[] tokens) {
         System.out.println("creation");
         return Menu.MenuStage.postlogin;
     }
 
-    private static Menu.MenuStage handleList() {
+    private Menu.MenuStage handleList() {
         System.out.println("(Pretend this is a list of a bunch of games)");
         return Menu.MenuStage.postlogin;
     }
 
-    private static Menu.MenuStage handleJoin(String[] tokens) {
+    private Menu.MenuStage handleJoin(String[] tokens) {
         System.out.println("Join a fun game!");
         return Menu.MenuStage.postlogin;
     }
 
-    private static Menu.MenuStage handleObserve(String[] tokens) {
+    private Menu.MenuStage handleObserve(String[] tokens) {
         System.out.println("Observe");
         return Menu.MenuStage.postlogin;
     }
 
-    private static void handleLogout() {
+    private void handleLogout() {
         System.out.println("logout");
     }
 }

@@ -1,7 +1,7 @@
 package menu;
 
 public class Prelogin {
-    public static Menu.MenuStage eval(String input) {
+    public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 
         if(tokens.length == 0) {
@@ -24,7 +24,7 @@ public class Prelogin {
         }
     }
 
-    public static void printHelp() {
+    public void printHelp() {
         System.out.println("Commands:");
         Menu.printCommand("help");
         System.out.println(" - Display these commands");
@@ -36,13 +36,13 @@ public class Prelogin {
         System.out.println(" - End this program");
     }
 
-    private static Menu.MenuStage handleRegister(String[] tokens) {
+    private Menu.MenuStage handleRegister(String[] tokens) {
         System.out.println("I see you are trying to register!");
         System.out.println("Let's assume you are successful");
         return Menu.MenuStage.postlogin;
     }
 
-    private static Menu.MenuStage handleLogin(String[] tokens) {
+    private Menu.MenuStage handleLogin(String[] tokens) {
         System.out.println("I see you are trying to login!");
         System.out.println("Let's assume you are successful");
         return Menu.MenuStage.postlogin;

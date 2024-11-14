@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Menu {
     ServerFacade facade;
+    Prelogin prelogin = new Prelogin();
+    Postlogin postlogin = new Postlogin();
     MenuStage stage = MenuStage.prelogin;
 
     public Menu(String url) {
@@ -25,7 +27,7 @@ public class Menu {
     public void run() {
         System.out.print(SET_TEXT_COLOR_YELLOW);
         System.out.println("Welcome to chess!");
-        Prelogin.printHelp();
+        prelogin.printHelp();
 
         Scanner scanner = new Scanner(System.in);
         String result = "";
@@ -37,10 +39,10 @@ public class Menu {
             result = scanner.nextLine();
 
             if(stage == MenuStage.prelogin) {
-                stage = Prelogin.eval(result);
+                stage = prelogin.eval(result);
             }
             else if(stage == MenuStage.postlogin) {
-                stage = Postlogin.eval(result);
+                stage = postlogin.eval(result);
             }
         }
         System.out.println();
