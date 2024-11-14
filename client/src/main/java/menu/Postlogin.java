@@ -1,12 +1,15 @@
 package menu;
 
 import chess.ChessGame;
+import model.GameData;
 import ui.BoardDrawer;
-import result.ServiceException;
+import request.*;
+import result.*;
 import serverfacade.ServerFacade;
 
 public class Postlogin {
     ServerFacade facade;
+    GameData[] games;
 
     public Postlogin(ServerFacade facade) {
         this.facade = facade;
@@ -20,16 +23,16 @@ public class Postlogin {
             return Menu.MenuStage.postlogin;
         }
         else if(tokens[0].equals("create")) {
-            return handleCreate(tokens);
+            return handleCreate(authToken, tokens);
         }
         else if(tokens[0].equals("list")) {
-            return handleList();
+            return handleList(authToken);
         }
         else if(tokens[0].equals("join")) {
-            return handleJoin(tokens);
+            return handleJoin(authToken, tokens);
         }
         else if(tokens[0].equals("observe")) {
-            return handleObserve(tokens);
+            return handleObserve(authToken, tokens);
         }
         else if(tokens[0].equals("logout")) {
             handleLogout(authToken);
@@ -63,24 +66,77 @@ public class Postlogin {
         System.out.println(" - End this program");
     }
 
-    private Menu.MenuStage handleCreate(String[] tokens) {
-        System.out.println("creation");
+    private Menu.MenuStage handleCreate(String authToken, String[] tokens) {
+        if(tokens.length != 2) {
+            Menu.printError("Wrong number of arguments. Request could not be processed.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        CreateGameRequest createGameRequest = new CreateGameRequest(tokens[1]);
+        try {
+            CreateGameResult createGameResult = facade.createGame(authToken, createGameRequest);
+        }
+        catch(ServiceException ex) {
+            if(ex.getStatusCode() == 400) {
+                Menu.printError("Request could not be processed");
+            }
+            else if(ex.getStatusCode() == 401) {
+                Menu.printError("The session has timed out.");
+                return Menu.MenuStage.prelogin;
+            }
+            else {
+                Menu.printError();
+            }
+            return Menu.MenuStage.postlogin;
+        }
+
+        System.out.println("Game created.");
         return Menu.MenuStage.postlogin;
     }
 
-    private Menu.MenuStage handleList() {
-        System.out.println("(Pretend this is a list of a bunch of games)");
-        return Menu.MenuStage.postlogin;
+    private Menu.MenuStage handleList(String authToken) {
+        try {
+            ListGamesResult listGamesResult = facade.listGames(authToken);
+            GameData[] games = listGamesResult.games();
+            printGames(games);
+            this.games = games;
+            return Menu.MenuStage.postlogin;
+        }
+        catch(ServiceException ex) {
+            if (ex.getStatusCode() == 401) {
+                Menu.printError("The session has timed out.");
+                return Menu.MenuStage.prelogin;
+            } else {
+                Menu.printError();
+            }
+            return Menu.MenuStage.postlogin;
+        }
     }
 
-    private Menu.MenuStage handleJoin(String[] tokens) {
+    private void printGames(GameData[] games) {
+        System.out.println("Game ID | Game Name | White Player Name | Black Player Name");
+
+        for(int i = 0; i < games.length; i++) {
+            System.out.print(i+1);
+            System.out.print(" | ");
+            System.out.print(games[i].gameName());
+            System.out.print(" | ");
+            System.out.print(games[i].whiteUsername());
+            System.out.print(" | ");
+            System.out.print(games[i].blackUsername());
+            System.out.println();
+        }
+    }
+
+    private Menu.MenuStage handleJoin(String authToken, String[] tokens) {
         System.out.println("Join a fun game!");
         return Menu.MenuStage.postlogin;
     }
 
-    private Menu.MenuStage handleObserve(String[] tokens) {
+    private Menu.MenuStage handleObserve(String authToken, String[] tokens) {
         if(false /*Change this when there is an actual need for it*/) {
-            System.out.println("Wrong number of arguments. Request could not be processed.");
+            Menu.printError("Wrong number of arguments. Request could not be processed.");
+            return Menu.MenuStage.postlogin;
         }
 
         BoardDrawer.draw();
