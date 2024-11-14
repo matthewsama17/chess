@@ -34,11 +34,11 @@ public class Menu {
         Scanner scanner = new Scanner(System.in);
         String result = "";
 
-        System.out.print(SET_TEXT_COLOR_YELLOW);
-
         while(!result.equals("quit")) {
             printPrompt();
             result = scanner.nextLine();
+
+            System.out.print(SET_TEXT_COLOR_YELLOW);
 
             if(stage == MenuStage.prelogin) {
                 stage = prelogin.eval(result);
@@ -52,10 +52,11 @@ public class Menu {
 
     private void printPrompt() {
         System.out.print("\n");
-        System.out.print(RESET_TEXT_COLOR);
+        System.out.print(SET_TEXT_COLOR_BLUE);
         if(stage == MenuStage.postlogin) {
             System.out.print(prelogin.getUsername());
         }
+        System.out.print(RESET_TEXT_COLOR);
         System.out.print(">>> ");
         System.out.print(SET_TEXT_COLOR_GREEN);
     }
