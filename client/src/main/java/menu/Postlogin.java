@@ -151,6 +151,7 @@ public class Postlogin {
         }
         else {
             Menu.printError("The last argument must be either WHITE or BLACK");
+            return Menu.MenuStage.postlogin;
         }
 
         if(gameNum < 1 || gameNum > games.length) {
