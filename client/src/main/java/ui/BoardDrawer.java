@@ -28,6 +28,7 @@ public class BoardDrawer {
         board.movePiece(new ChessMove(new ChessPosition(8, 4), new ChessPosition(6, 6), null));
         ChessPosition startPosition = new ChessPosition(3, 6);
         drawMoves(board, ChessGame.TeamColor.WHITE, board.getPieceMoves(startPosition), startPosition);
+        System.out.println();
 
         startPosition = new ChessPosition(6, 6);
         drawMoves(board, ChessGame.TeamColor.BLACK, board.getPieceMoves(startPosition), startPosition);
@@ -132,7 +133,7 @@ public class BoardDrawer {
             }
 
             setSquareColor(out, row, col, endPositions);
-            drawPiece(out, board, row, col, startPosition);
+            drawPiece(out, board, row, col, endPositions, startPosition);
         }
     }
 
@@ -153,7 +154,7 @@ public class BoardDrawer {
 
     }
 
-    private static void drawPiece(PrintStream out, ChessBoard board, int row, int col, ChessPosition startPosition) {
+    private static void drawPiece(PrintStream out, ChessBoard board, int row, int col, Collection<ChessPosition> endPositions, ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
         String pieceString = null;
@@ -213,6 +214,11 @@ public class BoardDrawer {
             else if(piece.getPieceType() == ChessPiece.PieceType.KING) {
                 pieceString = WHITE_KING;
             }
+        }
+
+        ChessPosition position = new ChessPosition(row, col);
+        if(position.equals(startPosition) || endPositions.contains(position)) {
+            out.print(SET_TEXT_COLOR_BLACK);
         }
 
         out.print(SET_TEXT_BOLD);
