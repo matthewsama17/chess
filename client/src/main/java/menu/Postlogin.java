@@ -166,7 +166,7 @@ public class Postlogin {
             BoardDrawer.draw();
             System.out.println();
             BoardDrawer.draw(ChessGame.TeamColor.BLACK);
-            return Menu.MenuStage.postlogin;
+            return Menu.MenuStage.inGame;
         }
         catch(ServiceException ex) {
             if(ex.getStatusCode() == 400) {
@@ -197,7 +197,7 @@ public class Postlogin {
         BoardDrawer.draw();
         System.out.println();
         BoardDrawer.draw(ChessGame.TeamColor.BLACK);
-        return Menu.MenuStage.postlogin;
+        return Menu.MenuStage.inGame;
     }
 
     private void handleLogout(String authToken) {

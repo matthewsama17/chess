@@ -9,12 +9,14 @@ public class Menu {
     ServerFacade facade;
     Prelogin prelogin;
     Postlogin postlogin;
+    InGame inGame;
     MenuStage stage = MenuStage.prelogin;
 
     public Menu(String url) {
         facade = new ServerFacade(url);
         prelogin = new Prelogin(facade);
         postlogin = new Postlogin(facade);
+        inGame = new InGame(facade);
     }
 
     public Menu(int port) {
@@ -23,7 +25,8 @@ public class Menu {
 
     public enum MenuStage {
         prelogin,
-        postlogin
+        postlogin,
+        inGame
     }
 
     public void run() {
@@ -45,6 +48,9 @@ public class Menu {
             }
             else if(stage == MenuStage.postlogin) {
                 stage = postlogin.eval(result, prelogin.getAuthToken());
+            }
+            else if(stage == MenuStage.inGame) {
+                stage = inGame.eval(result);
             }
         }
         System.out.println();
