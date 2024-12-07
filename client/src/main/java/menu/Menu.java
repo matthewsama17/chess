@@ -1,5 +1,6 @@
 package menu;
 
+import result.LoginResult;
 import serverfacade.ServerFacade;
 import static ui.EscapeSequences.*;
 
@@ -11,6 +12,7 @@ public class Menu {
     Postlogin postlogin;
     InGame inGame;
     MenuStage stage = MenuStage.prelogin;
+    String username = null;
 
     public Menu(String url) {
         facade = new ServerFacade(url);
@@ -44,13 +46,23 @@ public class Menu {
             System.out.print(SET_TEXT_COLOR_YELLOW);
 
             if(stage == MenuStage.prelogin) {
-                stage = prelogin.eval(result);
+                LoginResult loginResult = prelogin.eval(result);
+
+                if(loginResult != null) {
+                    postlogin.setAuthToken(loginResult.authToken());
+                    inGame.setAuthToken(loginResult.authToken());
+                    username = loginResult.username();
+                    stage = MenuStage.postlogin;
+                }
             }
             else if(stage == MenuStage.postlogin) {
-                stage = postlogin.eval(result, prelogin.getAuthToken());
+                stage = postlogin.eval(result);
             }
             else if(stage == MenuStage.inGame) {
                 stage = inGame.eval(result);
+                if(result.equals("quit")) {
+                    result = "don't";
+                }
             }
         }
         System.out.println();
@@ -60,8 +72,8 @@ public class Menu {
         System.out.print(RESET_BG_COLOR);
         System.out.print("\n");
         System.out.print(SET_TEXT_COLOR_BLUE);
-        if(stage == MenuStage.postlogin) {
-            System.out.print(prelogin.getUsername());
+        if(stage != MenuStage.prelogin) {
+            System.out.print(username);
         }
         System.out.print(RESET_TEXT_COLOR);
         System.out.print(">>> ");

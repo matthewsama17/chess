@@ -5,9 +5,14 @@ import ui.BoardDrawer;
 
 public class InGame {
     ServerFacade facade;
+    String authToken;
 
     public InGame(ServerFacade facade) {
         this.facade = facade;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     public Menu.MenuStage eval(String input) {

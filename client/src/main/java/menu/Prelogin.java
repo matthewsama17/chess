@@ -6,27 +6,17 @@ import serverfacade.ServerFacade;
 
 public class Prelogin {
     ServerFacade facade;
-    private String authToken = null;
-    private String username = null;
 
     public Prelogin(ServerFacade facade) {
         this.facade = facade;
     }
 
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public Menu.MenuStage eval(String input) {
+    public LoginResult eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 
         if(tokens.length == 0) {
             printHelp();
-            return Menu.MenuStage.prelogin;
+            return null;
         }
         else if(tokens[0].equals("register")) {
             return handleRegister(tokens);
@@ -36,11 +26,11 @@ public class Prelogin {
         }
         else if(tokens[0].equals("quit")) {
             System.out.println("Quitting...");
-            return Menu.MenuStage.prelogin;
+            return null;
         }
         else {
             printHelp();
-            return Menu.MenuStage.prelogin;
+            return null;
         }
     }
 
@@ -56,17 +46,16 @@ public class Prelogin {
         System.out.println(" - End this program");
     }
 
-    private Menu.MenuStage handleRegister(String[] tokens) {
+    private LoginResult handleRegister(String[] tokens) {
         if(tokens.length != 4) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
-            return Menu.MenuStage.prelogin;
+            return null;
         }
 
         RegisterRequest registerRequest =  new RegisterRequest(tokens[1], tokens[2], tokens[3]);
+        LoginResult loginResult;
         try {
-            LoginResult loginResult = facade.register(registerRequest);
-            authToken = loginResult.authToken();
-            username = loginResult.username();
+            loginResult = facade.register(registerRequest);
         }
         catch(ServiceException ex) {
             if(ex.getStatusCode() == 400) {
@@ -78,24 +67,23 @@ public class Prelogin {
             else {
                 Menu.printError();
             }
-            return Menu.MenuStage.prelogin;
+            return null;
         }
 
         System.out.println("Registered successfully!");
-        return Menu.MenuStage.postlogin;
+        return loginResult;
     }
 
-    private Menu.MenuStage handleLogin(String[] tokens) {
+    private LoginResult handleLogin(String[] tokens) {
         if(tokens.length != 3) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
-            return Menu.MenuStage.prelogin;
+            return null;
         }
 
         LoginRequest loginRequest = new LoginRequest(tokens[1], tokens[2]);
+        LoginResult loginResult;
         try {
-            LoginResult loginResult = facade.login(loginRequest);
-            authToken = loginResult.authToken();
-            username = loginResult.username();
+            loginResult = facade.login(loginRequest);
         }
         catch(ServiceException ex) {
             if(ex.getStatusCode() == 401) {
@@ -104,10 +92,10 @@ public class Prelogin {
             else {
                 Menu.printError();
             }
-            return Menu.MenuStage.prelogin;
+            return null;
         }
 
         System.out.println("Logged in successfully!");
-        return Menu.MenuStage.postlogin;
+        return loginResult;
     }
 }

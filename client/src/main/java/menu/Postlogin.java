@@ -9,13 +9,18 @@ import serverfacade.ServerFacade;
 
 public class Postlogin {
     ServerFacade facade;
+    String authToken;
     GameData[] games;
 
     public Postlogin(ServerFacade facade) {
         this.facade = facade;
     }
 
-    public Menu.MenuStage eval(String input, String authToken) {
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
+    public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 
         if(tokens.length == 0) {
@@ -23,24 +28,24 @@ public class Postlogin {
             return Menu.MenuStage.postlogin;
         }
         else if(tokens[0].equals("create")) {
-            return handleCreate(authToken, tokens);
+            return handleCreate(tokens);
         }
         else if(tokens[0].equals("list")) {
-            return handleList(authToken);
+            return handleList();
         }
         else if(tokens[0].equals("join")) {
-            return handleJoin(authToken, tokens);
+            return handleJoin(tokens);
         }
         else if(tokens[0].equals("observe")) {
-            return handleObserve(authToken, tokens);
+            return handleObserve(tokens);
         }
         else if(tokens[0].equals("logout")) {
-            handleLogout(authToken);
+            handleLogout();
             return Menu.MenuStage.prelogin;
         }
         else if(tokens[0].equals("quit")) {
             System.out.println("Quitting...");
-            handleLogout(authToken);
+            handleLogout();
             return Menu.MenuStage.postlogin;
         }
         else {
@@ -66,7 +71,7 @@ public class Postlogin {
         System.out.println(" - End this program");
     }
 
-    private Menu.MenuStage handleCreate(String authToken, String[] tokens) {
+    private Menu.MenuStage handleCreate(String[] tokens) {
         if(tokens.length != 2) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
             return Menu.MenuStage.postlogin;
@@ -94,7 +99,7 @@ public class Postlogin {
         return Menu.MenuStage.postlogin;
     }
 
-    private Menu.MenuStage handleList(String authToken) {
+    private Menu.MenuStage handleList() {
         try {
             ListGamesResult listGamesResult = facade.listGames(authToken);
             GameData[] games = listGamesResult.games();
@@ -128,7 +133,7 @@ public class Postlogin {
         }
     }
 
-    private Menu.MenuStage handleJoin(String authToken, String[] tokens) {
+    private Menu.MenuStage handleJoin(String[] tokens) {
         if(tokens.length != 3) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
             return Menu.MenuStage.postlogin;
@@ -188,7 +193,7 @@ public class Postlogin {
 
     }
 
-    private Menu.MenuStage handleObserve(String authToken, String[] tokens) {
+    private Menu.MenuStage handleObserve(String[] tokens) {
         if(false /*Change this when there is an actual need for it*/) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
             return Menu.MenuStage.postlogin;
@@ -200,7 +205,7 @@ public class Postlogin {
         return Menu.MenuStage.inGame;
     }
 
-    private void handleLogout(String authToken) {
+    private void handleLogout() {
         try {
             facade.logout(authToken);
         }
