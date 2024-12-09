@@ -1,9 +1,11 @@
 package websocket;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import result.ServiceException;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ServerMessage;
+import websocket.messages.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -13,6 +15,21 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
     Session session;
     ServerMessageObserver serverMessageObserver;
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapter(ServerMessage.class,
+                    (JsonDeserializer<ServerMessage>) (el, type, ctx) -> {
+                ServerMessage serverMessage = null;
+                if(el.isJsonObject()) {
+                    String serverMessageType = el.getAsJsonObject().get("serverMessageType").getAsString();
+                    switch(ServerMessage.ServerMessageType.valueOf(serverMessageType)) {
+                        case NOTIFICATION -> serverMessage = ctx.deserialize(el, NotificationMessage.class);
+                        case ERROR -> serverMessage = ctx.deserialize(el, ErrorMessage.class);
+                        case LOAD_GAME -> serverMessage = ctx.deserialize(el, LoadGameMessage.class);
+                    }
+                }
+                return serverMessage;
+                    })
+            .create();
 
     public WebSocketFacade(String url, ServerMessageObserver serverMessageObserver) throws ServiceException {
         try {
@@ -27,7 +44,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
                     serverMessageObserver.notify(serverMessage);
                 }
             });

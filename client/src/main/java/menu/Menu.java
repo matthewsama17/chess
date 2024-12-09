@@ -1,7 +1,10 @@
 package menu;
 
+import chess.ChessGame;
+import chess.ChessPosition;
 import result.LoginResult;
 import serverfacade.ServerFacade;
+import ui.BoardDrawer;
 import websocket.ServerMessageObserver;
 import websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
@@ -10,14 +13,16 @@ import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class Menu implements ServerMessageObserver {
+public class Menu {
     ServerFacade facade;
-    WebSocketFacade ws;
+    WebSocketFacade ws;static
     Prelogin prelogin;
     Postlogin postlogin;
     InGame inGame;
     MenuStage stage = MenuStage.prelogin;
     String username = null;
+    ChessGame chessGame = null;
+    ChessGame.TeamColor color = null;
 
     public Menu(String url) {
         facade = new ServerFacade(url);
@@ -25,8 +30,9 @@ public class Menu implements ServerMessageObserver {
         postlogin = new Postlogin(facade);
 
         try {
-            ws = new WebSocketFacade(url, this);
-            inGame = new InGame(facade, ws);
+            inGame = new InGame(facade, this);
+            ws = new WebSocketFacade(url, inGame);
+            inGame.addWS(ws);
         }
         catch (Exception ex) {
             printError();
@@ -80,12 +86,35 @@ public class Menu implements ServerMessageObserver {
         System.out.println();
     }
 
-    @Override
-    public void notify(ServerMessage message) {
+    public void printNotification(String message) {
+        System.out.print(RESET_BG_COLOR);
+        System.out.print(SET_TEXT_COLOR_YELLOW);
+        System.out.println();
+        System.out.println(message);
+        printPrompt();
+    }
+
+    public void printServerError(String message) {
         System.out.print(RESET_BG_COLOR);
         System.out.println();
-        Menu.printCommand(message.toString());
+        Menu.printError(message);
         printPrompt();
+    }
+
+    public void loadGame(ChessGame chessGame) {
+        this.chessGame = chessGame;
+
+        System.out.print(RESET_BG_COLOR);
+        System.out.println();
+        this.drawBoard();
+    }
+
+    public void drawBoard() {
+        BoardDrawer.draw(chessGame.getBoard(), color);
+    }
+
+    public void drawMoves(ChessPosition startPosition) {
+        BoardDrawer.drawMoves(chessGame.getBoard(), color, chessGame.validMoves(startPosition), startPosition);
     }
 
     private void printPrompt() {

@@ -4,16 +4,27 @@ import chess.ChessPosition;
 import com.google.gson.Gson;
 import serverfacade.ServerFacade;
 import ui.BoardDrawer;
+import websocket.ServerMessageObserver;
 import websocket.WebSocketFacade;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-public class InGame {
+import static ui.EscapeSequences.RESET_BG_COLOR;
+
+public class InGame implements ServerMessageObserver {
     ServerFacade facade;
+    Menu menu;
     WebSocketFacade ws;
     String authToken;
 
-    public InGame(ServerFacade facade, WebSocketFacade ws) {
+    public InGame(ServerFacade facade, Menu menu) {
         this.facade = facade;
+        this.menu = menu;
+    }
+
+    public void addWS(WebSocketFacade ws) {
         this.ws = ws;
     }
 
@@ -159,5 +170,23 @@ public class InGame {
         }
 
         return new ChessPosition(row, col);
+    }
+
+
+
+    @Override
+    public void notify(ServerMessage serverMessage) {
+        if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            NotificationMessage notificationMessage = (NotificationMessage) serverMessage;
+            menu.printNotification(notificationMessage.getMessage());
+        }
+        else if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+            ErrorMessage errorMessage = (ErrorMessage) serverMessage;
+            menu.printServerError(errorMessage.getErrorMessage());
+        }
+        else if(serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            LoadGameMessage loadGameMessage = (LoadGameMessage) serverMessage;
+            menu.loadGame(loadGameMessage.getGame());
+        }
     }
 }
