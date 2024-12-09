@@ -39,11 +39,10 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) { }
 
-    public void sendWS() throws ServiceException {
+    public void sendWS(String authToken) throws ServiceException {
         try {
-            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, "BadAuthToken", 700);
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, 700);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
-            this.session.close();
         }
         catch (IOException ex) {
             throw new ServiceException(ex.getMessage(), 500);

@@ -1,9 +1,11 @@
 package menu;
 
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import serverfacade.ServerFacade;
 import ui.BoardDrawer;
 import websocket.WebSocketFacade;
+import websocket.messages.ServerMessage;
 
 public class InGame {
     ServerFacade facade;
@@ -31,6 +33,14 @@ public class InGame {
             return Menu.MenuStage.inGame;
         }
         else if(tokens[0].equals("move")) {
+
+            try {
+                ws.sendWS(authToken);
+            }
+            catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+
             if(tokens.length == 2) {
                 handleSeeMove(tokens);
             }
@@ -93,13 +103,6 @@ public class InGame {
 
         System.out.println(startPosition);
         System.out.println(endPosition);
-
-        try {
-            ws.sendWS();
-        }
-        catch (Exception ex) {
-            Menu.printError();
-        }
     }
 
     private ChessPosition decodePosition(String input) {

@@ -82,7 +82,10 @@ public class Menu implements ServerMessageObserver {
 
     @Override
     public void notify(ServerMessage message) {
+        System.out.print(RESET_BG_COLOR);
+        System.out.println();
         Menu.printCommand(message.toString());
+        printPrompt();
     }
 
     private void printPrompt() {
