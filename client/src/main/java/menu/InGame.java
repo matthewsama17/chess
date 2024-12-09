@@ -3,13 +3,16 @@ package menu;
 import chess.ChessPosition;
 import serverfacade.ServerFacade;
 import ui.BoardDrawer;
+import websocket.WebSocketFacade;
 
 public class InGame {
     ServerFacade facade;
+    WebSocketFacade ws;
     String authToken;
 
-    public InGame(ServerFacade facade) {
+    public InGame(ServerFacade facade, WebSocketFacade ws) {
         this.facade = facade;
+        this.ws = ws;
     }
 
     public void setAuthToken(String authToken) {
@@ -90,6 +93,13 @@ public class InGame {
 
         System.out.println(startPosition);
         System.out.println(endPosition);
+
+        try {
+            ws.sendWS();
+        }
+        catch (Exception ex) {
+            Menu.printError();
+        }
     }
 
     private ChessPosition decodePosition(String input) {

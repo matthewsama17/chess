@@ -2,12 +2,17 @@ package menu;
 
 import result.LoginResult;
 import serverfacade.ServerFacade;
+import websocket.ServerMessageObserver;
+import websocket.WebSocketFacade;
+import websocket.messages.ServerMessage;
+
 import static ui.EscapeSequences.*;
 
 import java.util.Scanner;
 
-public class Menu {
+public class Menu implements ServerMessageObserver {
     ServerFacade facade;
+    WebSocketFacade ws;
     Prelogin prelogin;
     Postlogin postlogin;
     InGame inGame;
@@ -18,7 +23,14 @@ public class Menu {
         facade = new ServerFacade(url);
         prelogin = new Prelogin(facade);
         postlogin = new Postlogin(facade);
-        inGame = new InGame(facade);
+
+        try {
+            ws = new WebSocketFacade(url, this);
+            inGame = new InGame(facade, ws);
+        }
+        catch (Exception ex) {
+            printError();
+        }
     }
 
     public Menu(int port) {
@@ -66,6 +78,11 @@ public class Menu {
             }
         }
         System.out.println();
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        Menu.printCommand(message.toString());
     }
 
     private void printPrompt() {
