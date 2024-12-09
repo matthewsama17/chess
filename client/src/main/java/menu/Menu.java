@@ -5,9 +5,7 @@ import chess.ChessPosition;
 import result.LoginResult;
 import serverfacade.ServerFacade;
 import ui.BoardDrawer;
-import websocket.ServerMessageObserver;
 import websocket.WebSocketFacade;
-import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
 
@@ -75,6 +73,12 @@ public class Menu {
             }
             else if(stage == MenuStage.postlogin) {
                 stage = postlogin.eval(result);
+
+                if(stage == MenuStage.inGame) {
+                    color = postlogin.getGameInfo().playerColor();
+                    inGame.setGameID(postlogin.getGameInfo().gameID());
+                    inGame.connect();
+                }
             }
             else if(stage == MenuStage.inGame) {
                 stage = inGame.eval(result);
@@ -110,10 +114,18 @@ public class Menu {
     }
 
     public void drawBoard() {
+        if(chessGame == null) {
+            printError("No board could be located.");
+        }
+
         BoardDrawer.draw(chessGame.getBoard(), color);
     }
 
     public void drawMoves(ChessPosition startPosition) {
+        if(chessGame == null) {
+            printError("No board could be located.");
+        }
+
         BoardDrawer.drawMoves(chessGame.getBoard(), color, chessGame.validMoves(startPosition), startPosition);
     }
 

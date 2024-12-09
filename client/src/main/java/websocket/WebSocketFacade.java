@@ -58,12 +58,42 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) { }
 
-    public void sendWS(String authToken) throws ServiceException {
+    public void connect(String authToken, int gameID) throws ServiceException {
+        UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         try {
-            UserGameCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, 700, new ChessMove(new ChessPosition(1,4), new ChessPosition(4,1), null));
-            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            this.session.getBasicRemote().sendText(new Gson().toJson(userGameCommand));
         }
-        catch (IOException ex) {
+        catch(Exception ex) {
+            throw new ServiceException(ex.getMessage(), 500);
+        }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws ServiceException {
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+        try {
+            this.session.getBasicRemote().sendText(gson.toJson(makeMoveCommand));
+        }
+        catch(Exception ex) {
+            throw new ServiceException(ex.getMessage(), 500);
+        }
+    }
+
+    public void leave(String authToken, int gameID) throws ServiceException {
+        UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(gson.toJson(userGameCommand));
+        }
+        catch(Exception ex) {
+            throw new ServiceException(ex.getMessage(), 500);
+        }
+    }
+
+    public void resign(String authToken, int gameID) throws ServiceException {
+        UserGameCommand userGameCommand = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        try {
+            this.session.getBasicRemote().sendText(gson.toJson(userGameCommand));
+        }
+        catch(Exception ex) {
             throw new ServiceException(ex.getMessage(), 500);
         }
     }

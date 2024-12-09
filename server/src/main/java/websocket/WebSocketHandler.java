@@ -8,8 +8,7 @@ import dataaccess.sql.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.commands.MakeMoveCommand;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 import websocket.messages.*;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class WebSocketHandler {
                                 userGameCommand = ctx.deserialize(el, MakeMoveCommand.class);
                             }
                             else {
-                                userGameCommand = ctx.deserialize(el, UserGameCommand.class);
+                                userGameCommand = ctx.deserialize(el, NormalGameCommand.class);
                             }
                         }
                         return userGameCommand;

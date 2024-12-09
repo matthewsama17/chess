@@ -1,15 +1,14 @@
 package menu;
 
+import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
-import com.google.gson.Gson;
+import result.ServiceException;
 import serverfacade.ServerFacade;
-import ui.BoardDrawer;
 import websocket.ServerMessageObserver;
 import websocket.WebSocketFacade;
-import websocket.messages.ErrorMessage;
-import websocket.messages.LoadGameMessage;
-import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
+import websocket.commands.*;
+import websocket.messages.*;
 
 import static ui.EscapeSequences.RESET_BG_COLOR;
 
@@ -18,6 +17,7 @@ public class InGame implements ServerMessageObserver {
     Menu menu;
     WebSocketFacade ws;
     String authToken;
+    int gameID;
 
     public InGame(ServerFacade facade, Menu menu) {
         this.facade = facade;
@@ -32,6 +32,19 @@ public class InGame implements ServerMessageObserver {
         this.authToken = authToken;
     }
 
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public void connect() {
+        try {
+            ws.connect(authToken, gameID);
+        }
+        catch(ServiceException ex) {
+            Menu.printError();
+        }
+    }
+
     public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
 
@@ -40,22 +53,14 @@ public class InGame implements ServerMessageObserver {
             return Menu.MenuStage.inGame;
         }
         else if(tokens[0].equals("draw")) {
-            handleDraw();
+            menu.drawBoard();
             return Menu.MenuStage.inGame;
         }
         else if(tokens[0].equals("move")) {
-
-            try {
-                ws.sendWS(authToken);
-            }
-            catch (Exception ex) {
-                throw new RuntimeException(ex.getMessage());
-            }
-
             if(tokens.length == 2) {
                 handleSeeMove(tokens);
             }
-            else if(tokens.length == 3) {
+            else if(tokens.length == 3 || tokens.length == 4) {
                 handleMakeMove(tokens);
             }
             else {
@@ -64,10 +69,24 @@ public class InGame implements ServerMessageObserver {
             return Menu.MenuStage.inGame;
         }
         else if(tokens[0].equals("leave")) {
+            try {
+                ws.leave(authToken, gameID);
+            }
+            catch(ServiceException ex) {
+                Menu.printError();
+            }
+
             return Menu.MenuStage.postlogin;
         }
         else if(tokens[0].equals("resign")) {
-            return Menu.MenuStage.postlogin;
+            try {
+                ws.resign(authToken, gameID);
+            }
+            catch(ServiceException ex) {
+                Menu.printError();
+            }
+
+            return Menu.MenuStage.inGame;
         }
         else {
             printHelp();
@@ -84,14 +103,12 @@ public class InGame implements ServerMessageObserver {
         System.out.println(" - See all valid moves for the piece at the given position (Ex. 'move A1')");
         Menu.printCommand("move <position> <position>");
         System.out.println(" - Make a move in the game (Ex. 'move A1 A2')");
+        Menu.printCommand("move <position> <position> <promotion>");
+        System.out.println(" - Make a move in the game that causes a promotion (Ex. 'move A2 A1 QUEEN')");
         Menu.printCommand("leave");
         System.out.println(" - Leave the game, allowing another player to take your place");
         Menu.printCommand("resign");
         System.out.println(" - Admit defeat to your opponent");
-    }
-
-    private void handleDraw() {
-        BoardDrawer.draw();
     }
 
     private void handleSeeMove(String[] tokens) {
@@ -101,7 +118,7 @@ public class InGame implements ServerMessageObserver {
             return;
         }
 
-        System.out.println(startPosition);
+        menu.drawMoves(startPosition);
     }
 
     private void handleMakeMove(String[] tokens) {
@@ -112,8 +129,33 @@ public class InGame implements ServerMessageObserver {
             return;
         }
 
-        System.out.println(startPosition);
-        System.out.println(endPosition);
+        ChessPiece.PieceType promotionPiece = null;
+        if(tokens.length == 4) {
+            if(tokens[3].equals("queen")) {
+                promotionPiece = ChessPiece.PieceType.QUEEN;
+            }
+            else if(tokens[3].equals("knight")) {
+                promotionPiece = ChessPiece.PieceType.KNIGHT;
+            }
+            else if(tokens[3].equals("rook")) {
+                promotionPiece = ChessPiece.PieceType.ROOK;
+            }
+            else if(tokens[3].equals("bishop")) {
+                promotionPiece = ChessPiece.PieceType.BISHOP;
+            }
+            else {
+                Menu.printError("Not a valid move");
+                return;
+            }
+        }
+
+        ChessMove move = new ChessMove(startPosition, endPosition, promotionPiece);
+        try {
+            ws.makeMove(authToken, gameID, move);
+        }
+        catch(ServiceException ex) {
+            Menu.printError();
+        }
     }
 
     private ChessPosition decodePosition(String input) {

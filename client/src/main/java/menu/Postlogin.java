@@ -11,6 +11,7 @@ public class Postlogin {
     ServerFacade facade;
     String authToken;
     GameData[] games;
+    JoinGameRequest gameInfo;
 
     public Postlogin(ServerFacade facade) {
         this.facade = facade;
@@ -18,6 +19,10 @@ public class Postlogin {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public JoinGameRequest getGameInfo() {
+        return gameInfo;
     }
 
     public Menu.MenuStage eval(String input) {
@@ -159,7 +164,7 @@ public class Postlogin {
             return Menu.MenuStage.postlogin;
         }
 
-        if(gameNum < 1 || gameNum > games.length) {
+        if(gameNum < 1 || games == null || gameNum > games.length) {
             Menu.printError("The second argument is not a valid Game ID.");
             return Menu.MenuStage.postlogin;
         }
@@ -167,10 +172,8 @@ public class Postlogin {
         JoinGameRequest joinGameRequest = new JoinGameRequest(color, games[gameNum-1].gameID());
         try {
             facade.joinGame(authToken, joinGameRequest);
+            gameInfo = joinGameRequest;
             System.out.println("Joined Game Successfully!");
-            BoardDrawer.draw();
-            System.out.println();
-            BoardDrawer.draw(ChessGame.TeamColor.BLACK);
             return Menu.MenuStage.inGame;
         }
         catch(ServiceException ex) {
@@ -194,14 +197,26 @@ public class Postlogin {
     }
 
     private Menu.MenuStage handleObserve(String[] tokens) {
-        if(false /*Change this when there is an actual need for it*/) {
+        if(tokens.length != 2) {
             Menu.printError("Wrong number of arguments. Request could not be processed.");
             return Menu.MenuStage.postlogin;
         }
 
-        BoardDrawer.draw();
-        System.out.println();
-        BoardDrawer.draw(ChessGame.TeamColor.BLACK);
+        int gameNum;
+
+        try {
+            gameNum = Integer.parseInt(tokens[1]);
+        } catch (NumberFormatException ex) {
+            Menu.printError("The second argument must be an integer.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        if(gameNum < 1 || games == null || gameNum > games.length) {
+            Menu.printError("The second argument is not a valid Game ID.");
+            return Menu.MenuStage.postlogin;
+        }
+
+        gameInfo = new JoinGameRequest(null, games[gameNum-1].gameID());
         return Menu.MenuStage.inGame;
     }
 
