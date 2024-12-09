@@ -1,10 +1,12 @@
 package websocket;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import result.ServiceException;
-import websocket.commands.UserGameCommand;
+import websocket.commands.*;
 import websocket.messages.*;
 
 import javax.websocket.*;
@@ -15,7 +17,7 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
     Session session;
     ServerMessageObserver serverMessageObserver;
-    Gson gson = new GsonBuilder()
+    private Gson gson = new GsonBuilder()
             .registerTypeAdapter(ServerMessage.class,
                     (JsonDeserializer<ServerMessage>) (el, type, ctx) -> {
                 ServerMessage serverMessage = null;
@@ -58,7 +60,7 @@ public class WebSocketFacade extends Endpoint {
 
     public void sendWS(String authToken) throws ServiceException {
         try {
-            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, 700);
+            UserGameCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, 700, new ChessMove(new ChessPosition(1,4), new ChessPosition(4,1), null));
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         }
         catch (IOException ex) {
