@@ -2,13 +2,17 @@ package server;
 
 import server.handler.*;
 import spark.*;
+import websocket.WebSocketHandler;
 
 public class Server {
+    WebSocketHandler webSocketHandler = new WebSocketHandler();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", ClearHandler::handleRequest);
