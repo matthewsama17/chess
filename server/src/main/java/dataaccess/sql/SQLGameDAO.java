@@ -102,7 +102,8 @@ public class SQLGameDAO implements GameDAO {
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
 
-                        gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, ChessGame.TeamColor.valueOf(resigned));
+                        ChessGame.TeamColor color = (resigned == null) ? null : ChessGame.TeamColor.valueOf(resigned);
+                        gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, color);
                     }
                 }
             }
@@ -132,7 +133,8 @@ public class SQLGameDAO implements GameDAO {
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
 
-                        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, ChessGame.TeamColor.valueOf(resigned));
+                        ChessGame.TeamColor color = (resigned == null) ? null : ChessGame.TeamColor.valueOf(resigned);
+                        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, color);
                         games.add(gameData);
                     }
                 }

@@ -134,8 +134,11 @@ public class WebSocketHandler {
     private void handleLeave(Session session, String authToken, String username, int gameID, GameData gameData) {
         connections.remove(authToken);
 
+        String notificationString = username + " left";
+        broadcastNotification(gameID, authToken, notificationString);
+
         if(username.equals(gameData.whiteUsername())) {
-            gameData = new GameData(gameData.gameID(), null, gameData.whiteUsername(), gameData.gameName(), gameData.game(), gameData.resigned());
+            gameData = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game(), gameData.resigned());
         }
         else if(username.equals(gameData.blackUsername())) {
             gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game(), gameData.resigned());
@@ -148,11 +151,8 @@ public class WebSocketHandler {
             gameDAO.updateGame(gameData);
         }
         catch(Exception ex) {
-            sendError(session, "ERROR: The game could not be left");
+            sendError(session, "ERROR: An error ocurred while leaving the game");
         }
-
-        String notificationString = username + " left";
-        broadcastNotification(gameID, authToken, notificationString);
     }
 
     private void sendNotification(Session session, String string) {
