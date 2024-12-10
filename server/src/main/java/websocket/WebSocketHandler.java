@@ -206,7 +206,9 @@ public class WebSocketHandler {
             return;
         }
 
-        if(gameData.resigned() != null) {
+        if(gameData.resigned() != null
+                || gameData.game().isInCheckmate(color)
+                || gameData.game().isInStalemate(color)) {
             sendError(session, "ERROR: The game is already over");
             return;
         }
