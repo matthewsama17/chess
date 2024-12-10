@@ -101,6 +101,7 @@ public class SQLGameDAO implements GameDAO {
                         String resigned = rs.getString(5);
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
+                        game = new ChessGame(game); //Gson doesn't like inner classes
 
                         ChessGame.TeamColor color = (resigned == null) ? null : ChessGame.TeamColor.valueOf(resigned);
                         gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, color);
@@ -132,6 +133,7 @@ public class SQLGameDAO implements GameDAO {
                         String resigned = rs.getString("resigned");
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
+                        game = new ChessGame(game); //Gson doesn't like inner classes
 
                         ChessGame.TeamColor color = (resigned == null) ? null : ChessGame.TeamColor.valueOf(resigned);
                         GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, color);

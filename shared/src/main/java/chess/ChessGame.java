@@ -21,6 +21,14 @@ public class ChessGame {
         enPassanter = new EnPassanter();
     }
 
+    public ChessGame(ChessGame other) {
+        this.teamTurn = other.teamTurn;
+        this.gameBoard = other.gameBoard.clone();
+
+        castler = new Castler(other.castler);
+        enPassanter = new EnPassanter(other.enPassanter);
+    }
+
     public TeamColor getTeamTurn() {
         return teamTurn;
     }
@@ -140,6 +148,7 @@ public class ChessGame {
         boolean thereAreNoMoves = true;
 
         for(int i = 1; i <= 8; i++) {
+
             for(int j = 1; j <= 8; j++) {
 
                 ChessPosition position = new ChessPosition(i,j);
@@ -217,6 +226,17 @@ public class ChessGame {
         private boolean whiteRightRookHasMoved = false;
         private boolean blackLeftRookHasMoved = false;
         private boolean blackRightRookHasMoved = false;
+
+        public Castler() {}
+
+        public Castler(Castler other) {
+            this.whiteKingHasMoved = other.whiteKingHasMoved;
+            this.blackKingHasMoved = other.blackKingHasMoved;
+            this.whiteRightRookHasMoved = other.whiteRightRookHasMoved;
+            this.whiteLeftRookHasMoved = other.whiteLeftRookHasMoved;
+            this.blackRightRookHasMoved = other.blackRightRookHasMoved;
+            this.blackLeftRookHasMoved = other.blackLeftRookHasMoved;
+        }
 
         public void checkIfKingOrRookMoved(ChessMove move) {
             if(move.getStartPosition().equals(WHITE_KING_START)) {
@@ -395,6 +415,13 @@ public class ChessGame {
     private class EnPassanter {
         private ChessMove enPassantLeft = null;
         private ChessMove enPassantRight = null;
+
+        public EnPassanter() {}
+
+        public EnPassanter(EnPassanter other) {
+            this.enPassantLeft = other.enPassantLeft;
+            this.enPassantRight = other.enPassantRight;
+        }
 
         public void checkEnPassantOpportunities(ChessMove move) {
             ChessPiece piece = ChessGame.this.gameBoard.getPiece(move.getEndPosition());
