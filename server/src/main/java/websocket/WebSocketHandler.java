@@ -129,14 +129,14 @@ public class WebSocketHandler {
             sendError(session, "ERROR: It isn't your turn");
             return;
         }
-        //if(game.isInCheckmate(color)) {
-        //    sendError(session, "ERROR: You cannot move because you are in checkmate");
-        //    return;
-        //}
-        //if(game.isInStalemate(color)); {
-        //    sendError(session, "ERROR: You cannot move because you are in stalemate");
-        //    return;
-        //}
+        if(game.isInCheckmate(color)) {
+            sendError(session, "ERROR: You cannot move because you are in checkmate");
+            return;
+        }
+        if(game.isInStalemate(color)) {
+            sendError(session, "ERROR: You cannot move because you are in stalemate");
+            return;
+        }
 
         try {
             game.makeMove(move);
@@ -155,10 +155,23 @@ public class WebSocketHandler {
             return;
         }
 
+        broadcastLoadGame(gameID, null, game);
+
         String notificationString = username + " moved " + getSimplePosition(move.getStartPosition()) + " to " + getSimplePosition(move.getEndPosition());
         broadcastNotification(gameID, authToken, notificationString);
 
-        broadcastLoadGame(gameID, null, game);
+        if(game.isInCheckmate(game.getTeamTurn())) {
+            notificationString = game.getTeamTurn().toString() + " is in checkmate";
+            broadcastNotification(gameID, null, notificationString);
+        }
+        else if(game.isInCheck(game.getTeamTurn())) {
+            notificationString = game.getTeamTurn().toString() + " is in check";
+            broadcastNotification(gameID, null, notificationString);
+        }
+        else if(game.isInStalemate(game.getTeamTurn())) {
+            notificationString = "The game is in stalemate";
+            broadcastNotification(gameID, null, notificationString);
+        }
     }
 
     private String getSimplePosition(ChessPosition position) {
@@ -209,7 +222,7 @@ public class WebSocketHandler {
         }
 
         String notificationString = username + " resigned";
-        broadcastNotification(gameID, authToken, notificationString);
+        broadcastNotification(gameID, null, notificationString);
     }
 
     private void handleLeave(Session session, String authToken, String username, int gameID, GameData gameData) {
@@ -235,14 +248,6 @@ public class WebSocketHandler {
             sendError(session, "ERROR: An error ocurred while leaving the game");
             return;
         }
-    }
-
-    private void sendNotification(Session session, String string) {
-        NotificationMessage notificationMessage = new NotificationMessage(string);
-        try {
-            session.getRemote().sendString(gson.toJson(notificationMessage));
-        }
-        catch(Exception ignored) { }
     }
 
     private void sendError(Session session, String errorString) {
