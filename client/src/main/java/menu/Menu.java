@@ -1,6 +1,7 @@
 package menu;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import result.LoginResult;
 import serverfacade.ServerFacade;
@@ -9,6 +10,7 @@ import websocket.WebSocketFacade;
 
 import static ui.EscapeSequences.*;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class Menu {
@@ -111,6 +113,7 @@ public class Menu {
         System.out.print(RESET_BG_COLOR);
         System.out.println();
         this.drawBoard();
+        printPrompt();
     }
 
     public void drawBoard() {
@@ -126,7 +129,9 @@ public class Menu {
             printError("No board could be located.");
         }
 
-        BoardDrawer.drawMoves(chessGame.getBoard(), color, chessGame.validMoves(startPosition), startPosition);
+        Collection<ChessMove> moves = chessGame.validMoves(startPosition);
+
+        BoardDrawer.drawMoves(chessGame.getBoard(), color, moves, startPosition);
     }
 
     private void printPrompt() {
