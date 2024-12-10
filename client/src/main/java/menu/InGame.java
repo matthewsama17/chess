@@ -18,6 +18,7 @@ public class InGame implements ServerMessageObserver {
     WebSocketFacade ws;
     String authToken;
     int gameID;
+    int resigning = 0;
 
     public InGame(ServerFacade facade, Menu menu) {
         this.facade = facade;
@@ -47,6 +48,10 @@ public class InGame implements ServerMessageObserver {
 
     public Menu.MenuStage eval(String input) {
         String[] tokens = input.toLowerCase().split(" ");
+
+        if(resigning > 0) {
+            resigning -= 1;
+        }
 
         if(tokens.length == 0) {
             printHelp();
@@ -79,11 +84,18 @@ public class InGame implements ServerMessageObserver {
             return Menu.MenuStage.postlogin;
         }
         else if(tokens[0].equals("resign")) {
-            try {
-                ws.resign(authToken, gameID);
+            if(resigning <= 0) {
+                resigning = 2;
+                Menu.printCommand("");
+                System.out.println("Are you sure you want to resign? Doing so will end the game.");
+                System.out.println("If you are, enter 'resign' a second time.");
             }
-            catch(ServiceException ex) {
-                Menu.printError();
+            else {
+                try {
+                    ws.resign(authToken, gameID);
+                } catch (ServiceException ex) {
+                    Menu.printError();
+                }
             }
 
             return Menu.MenuStage.inGame;
