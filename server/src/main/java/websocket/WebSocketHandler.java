@@ -1,12 +1,8 @@
 package websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
+import chess.*;
+import chess.ChessGame.TeamColor;
+import com.google.gson.*;
 import dataaccess.*;
 import dataaccess.sql.*;
 import model.*;
@@ -71,12 +67,12 @@ public class WebSocketHandler {
 
         UserGameCommand.CommandType type = command.getCommandType();
 
-        ChessGame.TeamColor color = null;
+        TeamColor color = null;
         if(username.equals(gameData.whiteUsername())) {
-            color = ChessGame.TeamColor.WHITE;
+            color = TeamColor.WHITE;
         }
         else if(username.equals(gameData.blackUsername())) {
-            color = ChessGame.TeamColor.BLACK;
+            color = TeamColor.BLACK;
         }
 
         if(type == UserGameCommand.CommandType.CONNECT) {
@@ -95,14 +91,14 @@ public class WebSocketHandler {
         }
     }
 
-    private void handleConnect(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color) {
+    private void handleConnect(Session session, String authToken, String username, int gameID, GameData gameData, TeamColor color) {
         connections.add(authToken, gameID, session);
         String notificationString = username + " has joined the game as ";
 
-        if(color == ChessGame.TeamColor.WHITE) {
+        if(color == TeamColor.WHITE) {
             notificationString += "White";
         }
-        else if(color == ChessGame.TeamColor.BLACK) {
+        else if(color == TeamColor.BLACK) {
             notificationString += "Black";
         }
         else {
@@ -113,14 +109,14 @@ public class WebSocketHandler {
         sendLoadGame(session, gameData.game());
     }
 
-    private void handleMakeMove(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color, ChessMove move) {
+    private void handleMakeMove(Session session, String authToken, String username, int gameID, GameData gameData, TeamColor color, ChessMove move) {
         if(color == null) {
             sendError(session, "ERROR: You can't make moves, as you aren't a player");
             return;
         }
 
         if(gameData.resigned() != null) {
-            String colorString = (gameData.resigned() == ChessGame.TeamColor.BLACK) ? "Black" : "White";
+            String colorString = (gameData.resigned() == TeamColor.BLACK) ? "Black" : "White";
             sendError(session, "ERROR: The game is over because " + colorString + " resigned.");
             return;
         }
@@ -157,7 +153,9 @@ public class WebSocketHandler {
 
         broadcastLoadGame(gameID, null, game);
 
-        String notificationString = username + " moved " + getSimplePosition(move.getStartPosition()) + " to " + getSimplePosition(move.getEndPosition());
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        String notificationString = username + " moved " + encode(startPosition) + " to " + encode(endPosition);
         broadcastNotification(gameID, authToken, notificationString);
 
         if(game.isInCheckmate(game.getTeamTurn())) {
@@ -174,7 +172,7 @@ public class WebSocketHandler {
         }
     }
 
-    private String getSimplePosition(ChessPosition position) {
+    private String encode(ChessPosition position) {
         String output = "";
         output += switch(position.getColumn()) {
             case 1:
@@ -202,7 +200,7 @@ public class WebSocketHandler {
         return output;
     }
 
-    private void handleResign(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color) {
+    private void handleResign(Session session, String authToken, String username, int gameID, GameData gameData, TeamColor color) {
         if(color == null) {
             sendError(session, "ERROR: You can't resign, as you aren't a player");
             return;

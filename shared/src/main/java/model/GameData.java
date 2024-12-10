@@ -1,5 +1,6 @@
 package model;
 
 import chess.ChessGame;
+import chess.ChessGame.TeamColor;
 
-public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, chess.ChessGame game, ChessGame.TeamColor resigned) { }
+public record GameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game, TeamColor resigned) { }

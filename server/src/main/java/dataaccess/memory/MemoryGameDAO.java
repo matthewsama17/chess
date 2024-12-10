@@ -1,5 +1,6 @@
 package dataaccess.memory;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
@@ -15,7 +16,13 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public int createGame(GameData gameData) {
         int gameID = generateGameID();
-        GameData newGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game(), gameData.resigned());
+
+        String whiteUsername = gameData.whiteUsername();
+        String blackUsername = gameData.blackUsername();
+        String gameName = gameData.gameName();
+        ChessGame game = gameData.game();
+        ChessGame.TeamColor resigned  = gameData.resigned();
+        GameData newGameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, resigned);
 
         dataset.add(newGameData);
         return gameID;

@@ -68,7 +68,8 @@ public class BoardDrawer {
         draw(ChessGame.TeamColor.WHITE);
     }
 
-    private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color, Collection<ChessPosition> endPositions, ChessPosition startPosition) {
+    private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color,
+                                  Collection<ChessPosition> endPositions, ChessPosition startPosition) {
         drawBorder(out, color, true);
         for(int i = 1; i <= 8; i++) {
             int row = i;
@@ -125,7 +126,8 @@ public class BoardDrawer {
         out.print(" ");
     }
 
-    private static void drawBoardRow(PrintStream out, ChessBoard board, int row, ChessGame.TeamColor color, Collection<ChessPosition> endPositions, ChessPosition startPosition) {
+    private static void drawBoardRow(PrintStream out, ChessBoard board, int row, ChessGame.TeamColor color,
+                                     Collection<ChessPosition> endPositions, ChessPosition startPosition) {
         for(int i = 1; i <= 8; i++) {
             int col = i;
             if(color == ChessGame.TeamColor.BLACK) {
@@ -154,7 +156,8 @@ public class BoardDrawer {
 
     }
 
-    private static void drawPiece(PrintStream out, ChessBoard board, int row, int col, Collection<ChessPosition> endPositions, ChessPosition startPosition) {
+    private static void drawPiece(PrintStream out, ChessBoard board, int row, int col,
+                                  Collection<ChessPosition> endPositions, ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
         String pieceString = null;
