@@ -30,7 +30,8 @@ public class SQLGameDAO implements GameDAO {
                 whiteUsername VARCHAR(20),
                 blackUsername VARCHAR(20),
                 gameName VARCHAR(20) NOT NULL,
-                gameJson VARCHAR(2048) NOT NULL
+                gameJson VARCHAR(2048) NOT NULL,
+                resigned VarChar(5)
                 )
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
@@ -46,7 +47,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public int createGame(GameData gameData) {
         String command = """
-                INSERT INTO game (whiteUsername, blackUsername, gameName, gameJson) VALUES (?, ?, ?, ?)
+                INSERT INTO game (whiteUsername, blackUsername, gameName, gameJson, resigned) VALUES (?, ?, ?, ?, ?)
                 """;
         int gameID = 0;
 
@@ -57,6 +58,12 @@ public class SQLGameDAO implements GameDAO {
                 ps.setString(3, gameData.gameName());
                 String gameJson = gson.toJson(gameData.game());
                 ps.setString(4, gameJson);
+                if(gameData.resigned() != null) {
+                    ps.setString(5, gameData.resigned().toString());
+                }
+                else {
+                    ps.setString(5, null);
+                }
 
                 if(ps.executeUpdate() == 1) {
                     try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -75,7 +82,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public GameData getGame(int gameID) {
         String command = """
-                SELECT whiteUsername, blackUsername, gameName, gameJson
+                SELECT whiteUsername, blackUsername, gameName, gameJson, resigned
                 FROM game
                 WHERE gameID = ?
                 """;
@@ -91,10 +98,11 @@ public class SQLGameDAO implements GameDAO {
                         String blackUsername = rs.getString(2);
                         String gameName = rs.getString(3);
                         String gameJson = rs.getString(4);
+                        String resigned = rs.getString(5);
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
 
-                        gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                        gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, ChessGame.TeamColor.valueOf(resigned));
                     }
                 }
             }
@@ -120,10 +128,11 @@ public class SQLGameDAO implements GameDAO {
                         String blackUsername = rs.getString("blackUsername");
                         String gameName = rs.getString("gameName");
                         String gameJson = rs.getString("gameJson");
+                        String resigned = rs.getString("resigned");
 
                         ChessGame game = gson.fromJson(gameJson, ChessGame.class);
 
-                        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, game, ChessGame.TeamColor.valueOf(resigned));
                         games.add(gameData);
                     }
                 }
@@ -145,7 +154,7 @@ public class SQLGameDAO implements GameDAO {
 
         String command = """
                 UPDATE game
-                SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ?
+                SET whiteUsername = ?, blackUsername = ?, gameName = ?, gameJson = ?, resigned = ?
                 WHERE gameID = ?
                 """;
         try(Connection conn = DatabaseManager.getConnection()) {
@@ -155,7 +164,13 @@ public class SQLGameDAO implements GameDAO {
                 ps.setString(3, gameData.gameName());
                 String gameJson = gson.toJson(gameData.game());
                 ps.setString(4, gameJson);
-                ps.setInt(5, gameData.gameID());
+                if(gameData.resigned() != null) {
+                    ps.setString(5, gameData.resigned().toString());
+                }
+                else {
+                    ps.setString(5, null);
+                }
+                ps.setInt(6, gameData.gameID());
 
                 ps.executeUpdate();
             }

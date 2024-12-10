@@ -29,6 +29,8 @@ public class Menu {
         prelogin = new Prelogin(facade);
         postlogin = new Postlogin(facade);
 
+        facade.clear();
+
         try {
             inGame = new InGame(facade, this);
             ws = new WebSocketFacade(url, inGame);

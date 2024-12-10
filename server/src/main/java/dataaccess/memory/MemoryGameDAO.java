@@ -15,7 +15,7 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public int createGame(GameData gameData) {
         int gameID = generateGameID();
-        GameData newGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        GameData newGameData = new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game(), gameData.resigned());
 
         dataset.add(newGameData);
         return gameID;

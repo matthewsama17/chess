@@ -20,7 +20,7 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame);
+        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame, null);
 
         Assertions.assertDoesNotThrow(() -> gameDAO.createGame(gameData));
         Assertions.assertDoesNotThrow(() -> gameDAO.createGame(gameData));
@@ -33,7 +33,7 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame);
+        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame, null);
 
         int newGameID = gameDAO.createGame(gameData);
         Assertions.assertNotEquals(gameID, newGameID);
@@ -46,7 +46,7 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame);
+        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame, null);
         int newGameID = gameDAO.createGame(gameData);
 
         GameData newGameData = gameDAO.getGame(newGameID);
@@ -68,7 +68,7 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame, null);
         int newGameID = gameDAO.createGame(gameData);
 
         gameDAO.clear();
@@ -90,10 +90,10 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame, null);
         int newGameID = gameDAO.createGame(gameData);
 
-        GameData newGameData = new GameData(newGameID, whiteUsername, blackUsername, gameName, chessGame);
+        GameData newGameData = new GameData(newGameID, whiteUsername, blackUsername, gameName, chessGame, null);
 
         GameData[] expectedGameList = {newGameData};
         GameData[] gameList = gameDAO.listGames();
@@ -108,11 +108,11 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+        GameData gameData = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame, null);
         int newGameID = gameDAO.createGame(gameData);
 
         String newWhiteUsername = "obtuse";
-        GameData newGameData = new GameData(newGameID, newWhiteUsername, blackUsername, gameName, chessGame);
+        GameData newGameData = new GameData(newGameID, newWhiteUsername, blackUsername, gameName, chessGame, null);
         try {
             gameDAO.updateGame(newGameData);
         }
@@ -131,7 +131,7 @@ public class GameDAOTests {
         String blackUsername = "dinugs";
         String gameName = "VeryFunGame!";
         ChessGame chessGame = new ChessGame();
-        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame);
+        GameData gameData = new GameData(gameID,whiteUsername,blackUsername,gameName,chessGame, null);
 
         Assertions.assertThrows(DataAccessException.class, () -> gameDAO.updateGame(gameData));
     }

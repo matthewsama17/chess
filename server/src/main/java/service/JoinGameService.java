@@ -19,11 +19,11 @@ public class JoinGameService extends Service {
         }
         else if(joinGameRequest.playerColor() == ChessGame.TeamColor.WHITE
                 && gameData.whiteUsername() == null) {
-            gameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game());
+            gameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.game(), gameData.resigned());
         }
         else if(joinGameRequest.playerColor() == ChessGame.TeamColor.BLACK
                 && gameData.blackUsername() == null) {
-            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
+            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.game(), gameData.resigned());
         }
         else {
             throw new ServiceException("Error: already taken", 403);
