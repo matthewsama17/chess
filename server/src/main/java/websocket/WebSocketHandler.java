@@ -1,6 +1,9 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
@@ -68,28 +71,38 @@ public class WebSocketHandler {
 
         UserGameCommand.CommandType type = command.getCommandType();
 
+        ChessGame.TeamColor color = null;
+        if(username.equals(gameData.whiteUsername())) {
+            color = ChessGame.TeamColor.WHITE;
+        }
+        else if(username.equals(gameData.blackUsername())) {
+            color = ChessGame.TeamColor.BLACK;
+        }
+
         if(type == UserGameCommand.CommandType.CONNECT) {
-            handleConnect(session, command.getAuthToken(), username, command.getGameID(), gameData);
+            handleConnect(session, command.getAuthToken(), username, command.getGameID(), gameData, color);
         }
         else if(type == UserGameCommand.CommandType.MAKE_MOVE) {
-
+            MakeMoveCommand makeMoveCommand = (MakeMoveCommand) command;
+            ChessMove move = makeMoveCommand.getMove();
+            handleMakeMove(session, command.getAuthToken(), username, command.getGameID(), gameData, color, move);
         }
         else if(type == UserGameCommand.CommandType.RESIGN) {
-            handleResign(session, command.getAuthToken(), username, command.getGameID(), gameData);
+            handleResign(session, command.getAuthToken(), username, command.getGameID(), gameData, color);
         }
         else if(type == UserGameCommand.CommandType.LEAVE) {
             handleLeave(session, command.getAuthToken(), username, command.getGameID(), gameData);
         }
     }
 
-    private void handleConnect(Session session, String authToken, String username, int gameID, GameData gameData) {
+    private void handleConnect(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color) {
         connections.add(authToken, gameID, session);
         String notificationString = username + " has joined the game as ";
 
-        if(username.equals(gameData.whiteUsername())) {
+        if(color == ChessGame.TeamColor.WHITE) {
             notificationString += "White";
         }
-        else if(username.equals(gameData.blackUsername())) {
+        else if(color == ChessGame.TeamColor.BLACK) {
             notificationString += "Black";
         }
         else {
@@ -100,16 +113,84 @@ public class WebSocketHandler {
         sendLoadGame(session, gameData.game());
     }
 
-    private void handleResign(Session session, String authToken, String username, int gameID, GameData gameData) {
-        ChessGame.TeamColor color = null;
+    private void handleMakeMove(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color, ChessMove move) {
+        if(color == null) {
+            sendError(session, "ERROR: You can't make moves, as you aren't a player");
+            return;
+        }
 
-        if(username.equals(gameData.whiteUsername())) {
-            color = ChessGame.TeamColor.WHITE;
+        if(gameData.resigned() != null) {
+            String colorString = (gameData.resigned() == ChessGame.TeamColor.BLACK) ? "Black" : "White";
+            sendError(session, "ERROR: The game is over because " + colorString + " resigned.");
+            return;
         }
-        else if(username.equals(gameData.blackUsername())) {
-            color = ChessGame.TeamColor.BLACK;
+        ChessGame game = gameData.game();
+        if(game.getTeamTurn() != color) {
+            sendError(session, "ERROR: It isn't your turn");
+            return;
         }
-        else {
+        //if(game.isInCheckmate(color)) {
+        //    sendError(session, "ERROR: You cannot move because you are in checkmate");
+        //    return;
+        //}
+        //if(game.isInStalemate(color)); {
+        //    sendError(session, "ERROR: You cannot move because you are in stalemate");
+        //    return;
+        //}
+
+        try {
+            game.makeMove(move);
+        }
+        catch(InvalidMoveException ex) {
+            sendError(session, "ERROR: Invalid move");
+            return;
+        }
+
+        gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game, null);
+        try {
+            gameDAO.updateGame(gameData);
+        }
+        catch(Exception ex) {
+            sendError(session, "ERROR: The move could not be made");
+            return;
+        }
+
+        String notificationString = username + " moved " + getSimplePosition(move.getStartPosition()) + " to " + getSimplePosition(move.getEndPosition());
+        broadcastNotification(gameID, authToken, notificationString);
+
+        broadcastLoadGame(gameID, null, game);
+    }
+
+    private String getSimplePosition(ChessPosition position) {
+        String output = "";
+        output += switch(position.getColumn()) {
+            case 1:
+                yield "A";
+            case 2:
+                yield "B";
+            case 3:
+                yield "C";
+            case 4:
+                yield "D";
+            case 5:
+                yield "E";
+            case 6:
+                yield "F";
+            case 7:
+                yield "G";
+            case 8:
+                yield "H";
+            default:
+                yield "?";
+        };
+
+        output += ((Integer) position.getRow()).toString();
+
+        return output;
+    }
+
+    private void handleResign(Session session, String authToken, String username, int gameID, GameData gameData, ChessGame.TeamColor color) {
+        if(color == null) {
             sendError(session, "ERROR: You can't resign, as you aren't a player");
             return;
         }
@@ -152,6 +233,7 @@ public class WebSocketHandler {
         }
         catch(Exception ex) {
             sendError(session, "ERROR: An error ocurred while leaving the game");
+            return;
         }
     }
 
